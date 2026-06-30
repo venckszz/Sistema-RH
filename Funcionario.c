@@ -5,6 +5,7 @@
 
 #include "Bplus.h"
 #include "Funcionario.h"
+#include "Util.h"
 
 void limpaBuffer() {
     int c;
@@ -23,7 +24,7 @@ void verificaData(Data* data) {
             limpaBuffer();
         }
 
-        // Validar Mês
+        // Validar Mes
         while (data->mes < 1 || data->mes > 12) {
             printf("\n ERRO! O mes nao eh valido! Inserir novamente...\n");
             printf("Mes no formato (MM): ");
@@ -31,13 +32,13 @@ void verificaData(Data* data) {
             limpaBuffer();
         }
 
-        // Validar Dia baseado no mês e ano
+        // Validar Dia baseado no mes e ano
         int diasNoMes = 31;
 
         if (data->mes == 4 || data->mes == 6 || data->mes == 9 || data->mes == 11) {
             diasNoMes = 30;
         } else if (data->mes == 2) {
-            // Verifica se o ano é bissexto
+            // Verifica se o ano e bissexto
             if ((data->ano % 4 == 0 && data->ano % 100 != 0) || data->ano % 400 == 0) {
                 diasNoMes = 29;
             } else {
@@ -50,7 +51,7 @@ void verificaData(Data* data) {
             printf("Dia no formato (DD): ");
             scanf("%d", &data->dia);
             limpaBuffer();
-            // Como o dia mudou, reiniciamos o laço para garantir que a data é válida
+            // Como o dia mudou, reiniciamos o laco para garantir que a data e valida
             dataValida = false;
         } else {
             dataValida = true;
@@ -116,17 +117,17 @@ Funcionario criaFuncionario() {
 
     novo.residencia = residencia;
 
-    printf("Telefone (11 algarismos, sem símbolos): ");
+    printf("Telefone (11 algarismos, sem simbolos): ");
     fgets(novo.telefone, sizeof(novo.telefone), stdin);
     novo.telefone[strcspn(novo.telefone, "\n")] = '\0';
 
     Data dataContratacao;
     printf("Data de Contratacao no formato (DD/MM/AAAA): ");
     scanf("%d/%d/%d", &dataContratacao.dia, &dataContratacao.mes, &dataContratacao.ano);
-    limpaBuffer(); // Limpa logo após o scanf
+    limpaBuffer(); // Limpa logo apos o scanf
     verificaData(&dataContratacao);
 
-    // Verifica se o funcionário possui idade para trabalhar
+    // Verifica se o funcionario possui idade para trabalhar
     Data maioridade;
     maioridade.dia = novo.nascimento.dia;
     maioridade.mes = novo.nascimento.mes;
@@ -167,7 +168,7 @@ Funcionario criaFuncionario() {
         limpaBuffer();
 
         while (dataEhMenor(dataDesligamento, novo.contratacao)) {
-            printf("\n ERRO! Data invalida para o desligamento! Deve ser após a contratação. Inserir novamente...\n");
+            printf("\n ERRO! Data invalida para o desligamento! Deve ser apos a contratacao. Inserir novamente...\n");
             printf("Data de Desligamento no formato (DD/MM/AAAA): ");
             scanf("%d/%d/%d", &dataDesligamento.dia, &dataDesligamento.mes, &dataDesligamento.ano);
             limpaBuffer();

@@ -1,69 +1,40 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef struct no {
-   int posicaoNo;
-   int qtd_nos_atuais;
-   bool ehFolha; 
-   int posProximo;
+#define ORDEM 5
 
-   // Vetor para os dados genéricos
-   void* chaves;
+typedef struct pagina {
+    int pai;
+    bool pagina_ativa;
+
+    // Se pagina ativa, pos_prox_livre = -1;:
+    int pos_prox_livre;
+
+    int posPagina;
+    int qtd_chaves_atuais;
+    bool ehFolha;
+
+    // Vetor para os dados genericos
+    void* chaves[ORDEM - 1];
    
-   // Vetor de posição para os filhos
-   int* posFilhos;
-} No;
+    // Vetor de posicao para os filhos
+    int posFilhos[ORDEM];
+   
+    // Caso seja pagina interna, posProximo = -1
+    int posProximo;
+} Pagina;
 
 typedef struct Bplus {
-    
-    // Posicao da raiz
     int raiz;
     int ordem;
 
-    // Tamanho em bytes do dado genérico sendo armazenado
-    int tamanhoRegistro;
+    // Tamanho em bytes do dado generico sendo armazenado
+    size_t tamanho_registro;
+    int qtd_paginas;
 
-    // Posiçãoo para reaproveitamento/crescimento do arquivo
-    int proxima_posicao_livre;
-    
+    // Posicao para reaproveitamento/crescimento do arquivo
+    int prox_pos_livre;
 } Bplus;
 
-void* mallocSafe(size_t nbytes)
 
-No* alocaNo(int ordem, int tamanhoRegistro);
-
-void liberaNo(No* no);
-
-void leNoArquivo(FILE* arquivo, No* no, int posicaoNo, int ordem, int tamanhoRegistro);
-
-void escreveNoArquivo(FILE* arquivo, No* no, int ordem, int tamanhoRegistro);
-
-int obtemPosicaoLivreArquivo(FILE* arquivo, Bplus* cabecalho);
-
-
-Bplus abreArvore(FILE* arquivo, int ordem, int tamanhoRegistro);
-
-void fechaArvore(FILE* arquivo, Bplus* cabecalho);
-
-void insereRegistro(FILE* arquivo, Bplus* cabecalho, const void* dado, int (*compara)(const void*, const void*));
-
-bool buscaRegistro(FILE* arquivo, Bplus* cabecalho, const void* chaveBusca, void* dadoEncontrado, int (*compara)(const void*, const void*));
-
-
-void divideNocheio(FILE* arquivo, Bplus* cabecalho, No* noPai, int indiceFilho, No* noFilho);
-
-void insereNo(FILE* arquivo, Bplus* cabecalho, No* no_atual, const void* dado, int (*compara)(const void*, const void*));
-
-
-bool removeRegistro(FILE* arquivo, Bplus* cabecalho, const void* chaveBusca, int (*compara)(const void*, const void*));
-
-void balanciarNo(FILE* arquivo, Bplus* cabecalho, No* noPai, int indiceFilho);
-
-void redistribuiNo(FILE* arquivo, Bplus* cabecalho, No* noPai, No* noFilho, No* noIrmao, int indiceFilho, bool irmaoEsq);
-
-void mesclaNo(FILE* arquivo, Bplus* cabecalho, No* noPai, No* noFilho, No* noIrmao, int indiceFilho, bool irmaoEsq);
-
-
-void listaRegistroIntervalo(FILE* arquivo, Bplus* cabecalho, const void* chaveInicio, const void* chaveFim, int (*compara)(const void*, const void*), void (*imprime)(const void*));
-
-void imprimeArvore(FILE* arquivo, Bplus* cabecalho, void (*imprimeChave)(const void*));
+Bplus* criaCabecalhoBplus(FILE* arquivo, size_t tamanho_dado);

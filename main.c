@@ -22,13 +22,12 @@ int main(void) {
         printf("Entrada: ");
 
         scanf("%d", &opcao);
-        getchar(); // evita que opcao receba \n 
+        getchar();
 
         switch (opcao) {
 
             case 1:
-                printf("\n=== Iniciando o modulo de inserção de funcionario ===\n");
-                printf("\nPreencha as seguintes informacoes:\n\n");
+                printf("\n=== Iniciando o modulo de insercao de funcionario ===\n");
                 Funcionario novoFuncionario = criaFuncionario();
                 break;
             

@@ -12,18 +12,15 @@ typedef struct endereco {
 
 typedef struct funcionario {
     char nome[100];
-
-    Data nascimento;
-
     char nomePai[100];
     char nomeMae[100];
-
-    Endereco residencia;
     char telefone[15];
-
+    double salario;
+    Endereco residencia;
+    Data nascimento;
     Data contratacao;
-    bool atividade;
     Data desligamento;
+    bool atividade;
 
     // Vetor que armazena em cada índice o pagamento referente àquele mês
     double historicoPagamentos[12];
