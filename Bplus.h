@@ -4,10 +4,9 @@
 #define ORDEM 5
 
 typedef struct pagina {
-    int pai;
     bool pagina_ativa;
 
-    // Se pagina ativa, pos_prox_livre = -1;:
+    // Não impacta página ativa, apenas as inativas, logo, quando ativa, valor = -1
     int pos_prox_livre;
 
     int posPagina;
@@ -15,10 +14,10 @@ typedef struct pagina {
     bool ehFolha;
 
     // Vetor para os dados genericos
-    void* chaves[ORDEM - 1];
+    void* chaves[ORDEM];
    
     // Vetor de posicao para os filhos
-    int posFilhos[ORDEM];
+    int posFilhos[ORDEM + 1];
    
     // Caso seja pagina interna, posProximo = -1
     int posProximo;
@@ -38,3 +37,19 @@ typedef struct Bplus {
 
 
 Bplus* criaCabecalhoBplus(FILE* arquivo, size_t tamanho_dado);
+
+Bplus* leituraCabecalhoBplus(FILE* arquivo);
+
+Pagina* criaPagina(size_t tamanho_dado, bool ehFolha);
+
+int alocaPagina(FILE* arquivo, Bplus *cabecalho);
+
+void escrevePagina(FILE* arquivo, Bplus* cabecalho, Pagina* p, void (*escreveDado)(void*, FILE*));
+
+Pagina* leituraPagina(FILE* arquivo, Bplus* cabecalho, int posPagina, void (*leituraDado)(void*, FILE*));
+
+int insereDadoBplus(FILE* arquivo, Bplus* cabecalho, void* novo_dado, bool (*ehMenor)(void*, void*), void (*escreve)(void*), void (*leituraDado)(void*, FILE*));
+
+Pagina* buscaDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoBuscado, int* indiceBusca, bool* encontrou, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*));
+
+void liberaPagina(Pagina *p);

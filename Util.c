@@ -18,10 +18,14 @@ void verificaArquivo(FILE* arquivo) {
         printf("ERRO! Arquivo vazio\n");
         exit(1);
     }
-
     return;
 }
 
 size_t calculaPosicaoPagina(int posPagina, size_t tamanho_registro) {
     return sizeof(Bplus) + sizeof(Pagina) + ((ORDEM - 1) * tamanho_registro);
+}
+
+void limpaBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 }

@@ -7,4 +7,6 @@ void verificaArquivo(FILE* arquivo);
 
 int calculaDeslocamentoPagina(int posPagina, size_t tamanho_registro);
 
+void limpaBuffer();
+
 

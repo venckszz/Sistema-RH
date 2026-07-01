@@ -26,10 +26,20 @@ typedef struct funcionario {
     double historicoPagamentos[12];
 } Funcionario;
 
-void limpaBuffer();
+// Usado para busca de funcionários
+typedef struct dadoBusca {
+    char* nome;
+    Data dataNascimento;
+} dadoBusca;
 
 void verificaData(Data* data);
 
 bool dataEhMenor(Data a, Data b);
+
+bool ehMenorFuncionario(void *a, void *b);
+
+void escreveFuncionario(void *dado, FILE *arquivo);
+
+void leituraFuncionario(void *dado, FILE *arquivo);
 
 Funcionario criaFuncionario();
