@@ -42,4 +42,6 @@ void escreveFuncionario(void *dado, FILE *arquivo);
 
 void leituraFuncionario(void *dado, FILE *arquivo);
 
+void imprimeChaveFuncionario(void* dado);
+
 Funcionario criaFuncionario();

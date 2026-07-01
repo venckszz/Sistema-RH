@@ -12,15 +12,18 @@ typedef struct pagina {
     int posPagina;
     int qtd_chaves_atuais;
     bool ehFolha;
-
-    // Vetor para os dados genericos
-    void* chaves[ORDEM];
    
-    // Vetor de posicao para os filhos
+    // Vetor de posicao para os filhos, só se usa em interno
     int posFilhos[ORDEM + 1];
    
     // Caso seja pagina interna, posProximo = -1
     int posProximo;
+
+    // Vetor para os indices de cada chave, só se usa em folha
+    int posRegistro[ORDEM];
+
+     // Vetor para os dados genericos
+    void* chaves[ORDEM]; 
 } Pagina;
 
 typedef struct Bplus {
@@ -36,7 +39,7 @@ typedef struct Bplus {
 } Bplus;
 
 
-Bplus* criaCabecalhoBplus(FILE* arquivo, size_t tamanho_dado);
+void abreBplus(FILE* arquivo, size_t tamanho_dado);
 
 Bplus* leituraCabecalhoBplus(FILE* arquivo);
 
@@ -51,5 +54,7 @@ Pagina* leituraPagina(FILE* arquivo, Bplus* cabecalho, int posPagina, void (*lei
 int insereDadoBplus(FILE* arquivo, Bplus* cabecalho, void* novo_dado, bool (*ehMenor)(void*, void*), void (*escreve)(void*), void (*leituraDado)(void*, FILE*));
 
 Pagina* buscaDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoBuscado, int* indiceBusca, bool* encontrou, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*));
+
+void imprimeArvoreBplus(FILE* arquivo, Bplus* cabecalho, int posAtual, int profundidade, void (*imprimeChave)(void*), void (*leituraDado)(void*, FILE*));
 
 void liberaPagina(Pagina *p);

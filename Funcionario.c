@@ -71,11 +71,11 @@ bool dataEhMenor(Data a, Data b) {
     return false;
 }
 
-bool ehMenorFuncionario(void *a, void *b) {
-    Funcionario *f1 = (Funcionario *) a;
-    Funcionario *f2 = (Funcionario *) b;
+bool ehMenorDadoBusca(void* dado1, void* dado2) {
+    dadoBusca* dado1_busca = (dadoBusca*) dado1;
+    dadoBusca* dado2_busca = (dadoBusca*) dado2;
 
-    int comparacao = strcmp(f1->nome, f2->nome);
+    int comparacao = strcmp(dado1_busca->nome, dado2_busca->nome);
 
     if (comparacao < 0)
         return true;
@@ -84,18 +84,7 @@ bool ehMenorFuncionario(void *a, void *b) {
         return false;
 
     // desempata pela data de nascimento
-    return dataEhMenor(f1->nascimento, f2->nascimento);
-}
-
-bool ehMenorDadoBusca(void* dado1, void* dado2) {
-    dadoBusca* dado1_busca = (dadoBusca*) dado1;
-    dadoBusca* dado2_busca = (dadoBusca*) dado2;
-     
-    if (!strcmp(dado1_busca->nome, dado2_busca->nome)) {
-        return dataEhMenor(dado1_busca->dataNascimento, dado2_busca->dataNascimento);
-    }
-    
-    return dado1_busca->nome < dado2_busca->nome;
+    return dataEhMenor(dado1_busca->dataNascimento, dado2_busca->dataNascimento);
 }
 
 void escreveFuncionario(void *dado, FILE *arquivo) {
@@ -114,6 +103,19 @@ void leituraFuncionario(void *dado, FILE *arquivo) {
 
     Funcionario *funcionario = (Funcionario *) dado;
     fread(funcionario, sizeof(Funcionario), 1, arquivo);
+}
+
+void imprimeChaveFuncionario(void* dado) {
+    if (dado == NULL) return;
+    
+    Funcionario* funcionario = (Funcionario*)dado;
+    
+    char primeiroNome[50];
+    
+    // Extrai apenas a primeira palavra da string 'nome'
+    sscanf(func->nome, "%s", primeiroNome); 
+    
+    printf("%s (%02d/%02d/%04d)", primeiroNome, funcionario->nascimento.dia, funcionario->nascimento.mes, funcionario->nascimento.ano);
 }
 
 Funcionario criaFuncionario() {
