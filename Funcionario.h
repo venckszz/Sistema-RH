@@ -27,7 +27,7 @@ typedef struct funcionario {
 
 // Usado para busca de funcionários
 typedef struct dadoBusca {
-    char* nome;
+    char nome[100];
     Data dataNascimento;
 } dadoBusca;
 
@@ -35,7 +35,11 @@ void verificaData(Data* data);
 
 bool dataEhMenor(Data a, Data b);
 
-bool ehMenorFuncionario(void *a, void *b);
+bool ehMenorDadoBusca(void* dado1, void* dado2);
+
+void escreveDadoBusca(void *dado, FILE *arquivo);
+
+void leituraDadoBusca(void *dado, FILE *arquivo);
 
 void escreveFuncionario(void *dado, FILE *arquivo);
 

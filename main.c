@@ -28,10 +28,33 @@ int main(void) {
 
             case 1:
                 printf("\n=== Iniciando o modulo de insercao de funcionario ===\n");
-                dadoBusca dadoFuncionario = criaDadoBusca();
+                dadoBusca dado = criaDadoBusca();
+                FILE* registros = fopen("funcionario.bin", "rb+");
+                if (registros == NULL) registros = fopen("funcionario.bin", "wb+");
 
-                
-                Funcionario novoFuncionario = criaFuncionario(dadoFuncionario.nome, dadoFuncionario.dataNascimento);
+                FILE* arvore = fopen("bplus.bin", "rb+");
+                if (arvore == NULL) arvore = fopen("bplus.bin", "wb+");
+
+                Bplus* cabecalho = leituraCabecalhoBplus(arvore);
+
+                if (cabecalho == NULL) {
+                    abreBplus(arvore, sizeof(dadoBusca));
+                    cabecalho = leituraCabecalhoBplus(arvore);
+                }
+
+                int indiceBusca = -1;
+                bool encontrou = false;
+
+                Pagina* pagBusca = buscaDadoBplus(arvore, cabecalho, &dado, &indiceBusca, &encontrou, ehMenorDadoBusca, leituraDadoBusca);
+
+                if (encontrou) {
+                    printf("\nO funcionário já existe no sistema!\n");
+                    liberaPaginaRAM(pagBusca);
+                }
+                else {
+                    Funcionario novoFuncionario = criaFuncionario(dado.nome, dado.dataNascimento);
+                    fseek(registros, 0, SEEK_END)
+                }
                 break;
             
             case 2:

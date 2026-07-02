@@ -125,7 +125,7 @@ void liberaLogicamentePagina(FILE* arquivo, Bplus* cabecalho, Pagina* pagina) {
 }
 
 // Insere uma pagina da RAM no arquivo
-void escrevePagina(FILE* arquivo, Bplus* cabecalho, Pagina* p, void (*escreveDado)(void*, FILE*)){
+void escrevePagina(FILE* arquivo, Bplus* cabecalho, Pagina* p, void (*escreveDado)(void*, FILE*)) {
     verificaArquivo(arquivo);
     if (cabecalho == NULL || p == NULL) return;
 
@@ -448,7 +448,7 @@ void insereNaFolha(Pagina* pagina, void* novo_dado, int indiceDado, bool (*ehMen
     pagina->qtd_chaves_atuais++;
 }
 
-Pagina* splitFolha(Pagina* pagina, Bplus* cabecalho){
+Pagina* splitFolha(Pagina* pagina, Bplus* cabecalho) {
     if (cabecalho == NULL) return NULL;
 
     // divide a pagina ao meio
@@ -592,15 +592,76 @@ bool removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dado
         liberaPaginaRAM(pagina);
         return;
     }
+    
+    int posPai = posicoes_pais[aux - 1];
+    int indiceFilho = indices_filhos[aux - 1];
 
-    if (pagina->qtd_chaves_atuais < MIN_CHAVES) {
-        bool conseguiu = redistribui(arquivo, cabecalho, pagina, posicoes_pais[aux], escreveDado, leituraDado);
-        
+    Pagina* pai = leituraPagina(arquivo, cabecalho, posPai, leituraDado);
+
+    // Tenta em primeiro caso redistribuir as chaves com as páginas vizinhas, caso dê certo, atualiza as páginas no disco e finaliza
+    if (redistribui(arquivo, cabecalho, pagina, pai, indiceFilho, escreveDado, leituraDado)) {
+        escreveCabecalhoBplus(arquivo, cabecalho);
+        liberaPaginaRAM(pagina);
+        liberaPaginaRAM(pai);
+        return;
     }
+    
+    // A distribuição não dando certo, tenta concatenar com páginas vizinhas
+    
+    if (concatenaBplus(arquivo, cabecalho, pai, indiceFilho, ))
+
+    
 
 }
 
+void concatenaBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pai, int indiceFilhoEsq, Pagina* irmaoEsq, Pagina* irmaoDir, void (*escreveDado)(void*, FILE*)) {
+    verificaArquivo(arquivo);
+
+    if (cabecalho == NULL || pai == NULL || irmaoEsq == NULL || irmaoDir == NULL) return;
+
+    if (!irmaoEsq->ehFolha) {
+        irmaoEsq->chaves[irmaoEsq->qtd_chaves_atuais] = pai->chaves[indiceFilhoEsq]; 
+        irmaoEsq->qtd_chaves_atuais++;
+    }
+
+    for (int i = 0; i < irmaoDir->qtd_chaves_atuais; i++) {
+        irmaoEsq->chaves[irmaoEsq->qtd_chaves_atuais + i] = irmaoDir->chaves[i];
+
+        int base = irmaoEsq->qtd_chaves_atuais;
+        
+        if (irmaoDir->ehFolha && irmaoEsq->ehFolha) {
+            irmaoEsq->posRegistro[irmaoEsq->qtd_chaves_atuais + i] = irmaoDir->posRegistro[i];
+        }
+        else
+            irmaoDir->posFilhos[base + 1] = irmaoEsq->posFilhos[i];
+    }
+
+    if (!irmaoDir->ehFolha && !irmaoEsq->ehFolha)
+        irmaoEsq->posFilhos[base + irmaoDir->qtd_chaves_atuais] = irmaoDir->posFilhos[irmaoDir->qtd_chaves_atuais];
+
+    irmaoEsq->qtd_chaves_atuais += irmaoDir->qtd_chaves_atuais;
+
+    if (irmaoDir->ehFolha && irmaoEsq->ehFolha)
+        irmaoEsq->posProximo = irmaoDir->posProximo;
+    
+    for (int i = indiceFilhoEsq; i < pai->qtd_chaves_atuais - 1; i++) {
+        pai->chaves[i] = pai->chaves[i + 1];
+        pai->posFilhos[i + 1] = pai->posFilhos[i + 2];
+    }
+    pai->qtd_chaves_atuais--;
+
+    liberaLogicamentePagina(arquivo, cabecalho, irmaoDir);
+    escrevePagina(arquivo, cabecalho, irmaoEsq, escreveDado);
+    escrevePagina(arquivo, cabecalho, pai, escreveDado);
+    escreveCabecalhoBplus(arquivo, cabecalho);
+}
+
 bool redistribui(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, int posPai, int indiceFilho, void (*escreveDado)(void*, FILE*), void (*leituraDado)(void*, FILE*)) {
+    verificaArquivo(arquivo);
+
+    if (cabecalho == NULL || pagina == NULL) return;
+    
+    
     Pagina* pai = leituraPagina(arquivo, cabecalho, posPai, leituraDado);
 
     int chaveEsq = (indiceFilho < 0);
@@ -617,9 +678,58 @@ bool redistribui(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, int posPai, in
             pagina->posRegistro[i] = pagina->posRegistro[i + 1];
         }
 
+        // Recebe o valor da distribuição com o irmão à esquerda
+        pagina->chaves[0] = irmaoEsq->chaves[tmp];
         
+        // Conecta o novo nó da página atual com o último do irmão à esquerda
+        pagina->posRegistro[0] = irmaoEsq->posRegistro[tmp];
+        pagina->qtd_chaves_atuais++;
+        irmaoEsq->qtd_chaves_atuais--;
+
+        pai->chaves[indiceFilho - 1] = pagina->chaves[0];
+
+        // Atualiza as 3 páginas no arquivo
+        escrevePagina(arquivo, cabecalho, pagina, escreveDado);
+        escrevePagina(arquivo, cabecalho, irmaoEsq, escreveDado);
+        escrevePagina(arquivo, cabecalho, pai, escreveDado);
+        
+        liberaPaginaRAM(irmaoEsq);
+
+        if (irmaoDir) liberaPaginaRAM(irmaoDir);
+
+        return true;
+    }
+
+    if (irmaoDir != NULL && irmaoDir->qtd_chaves_atuais > MIN_CHAVES) {
+        int tmp = pagina->qtd_chaves_atuais;
+
+        pagina->chaves[tmp] = irmaoDir->chaves[0];
+        pagina->posRegistro[tmp] = irmaoDir->posRegistro[0];
+        pagina->qtd_chaves_atuais++;
+
+        for (int i = 0; i < pagina->qtd_chaves_atuais - 1; i++) {
+            irmaoDir->chaves[i] = irmaoDir->chaves[i + 1];
+            irmaoDir->posRegistro[i] = irmaoDir->posRegistro[i + 1];
+        }
+
+        irmaoDir->qtd_chaves_atuais--;
+        pai->chaves[tmp] = irmaoDir->chaves[0];
+
+        escrevePagina(arquivo, cabecalho, pagina, escreveDado);
+        escrevePagina(arquivo, cabecalho, irmaoDir, escreveDado);
+        escrevePagina(arquivo, cabecalho, pai, escreveDado);
+
+        liberaPaginaRAM(irmaoDir);
+        
+        if (irmaoEsq) liberaPaginaRAM(irmaoEsq);
+        
+        return true;
     }
     
+    // Caso não tenha conseguido redistribuir, libera as páginas e retorna false
+    if (irmaoEsq) liberaPaginaRAM(irmaoEsq);
+    if (irmaoDir) liberaPaginaRAM(irmaoDir);
+    return false;
 }
 
 
@@ -654,29 +764,37 @@ void imprimeArvoreBplus(FILE* arquivo, Bplus* cabecalho, int posAtual, int profu
     liberaPaginaRAM(p);
 }
 
-void buscaIntervaloBplus(FILE* arquivo, Bplus* cabecalho, void* limite_inferior, void* limite_superior, int *indiceBusca, bool (*ehMenor)(void*, void*), void (*imprimeChave)(void*), void (*leituraDado)(void*, FILE*)) {
-    Pagina* paginaAtual = buscaDadoBplus(arquivo, cabecalho, limite_inferior, indiceBusca, false, ehMenor, leituraDado);
-    while (!ehMenor(lmi))
+void buscaIntervaloBplus(FILE* arquivo, Bplus* cabecalho, void* limite_inferior, void* limite_superior, bool (*ehMenor)(void*, void*), void (*imprimeChave)(void*), void (*leituraDado)(void*, FILE*)) {
+    int indiceBusca = 0;
+    bool encontrou = false;
+    
+    Pagina* paginaAtual = buscaDadoBplus(arquivo, cabecalho, limite_inferior, &indiceBusca, &encontrou, ehMenor, leituraDado);
+    
+    while (paginaAtual != NULL) {
         for (int i = indiceBusca; i < paginaAtual->qtd_chaves_atuais; i++) {
-            if (ehMenor(limite_inferior, paginaAtual->chaves[i]) && ehMenor(paginaAtual->chaves[i], limite_inferior))
+            if (!ehMenor(paginaAtual->chaves[i], limite_superior)) {
+                liberaPaginaRAM(paginaAtual);
+                return;
+            }
+            
+            if (ehMenor(limite_inferior, paginaAtual->chaves[i])) {
                 imprimeChave(paginaAtual->chaves[i]);
-            if (!ehMenor(limite_superior, paginaAtual->chaves[i]))
-                break;
+                printf("\n");
+            }
         }
         
-        if (paginaAtual->posProximo == -1) return;
+        if (paginaAtual->posProximo == -1) {
+            liberaPaginaRAM(paginaAtual);
+            return;
+        } 
 
         int posProxPagina = paginaAtual->posProximo;
         liberaPaginaRAM(paginaAtual);
 
-        paginaAtual = (arquivo, cabecalho, posProxPagina, leituraDado);
+        paginaAtual = leituraPagina(arquivo, cabecalho, posProxPagina, leituraDado);
         
-        i = 0;
-    
-    
-    
-
-    
+        indiceBusca = 0;
+    }  
 }
 
 

@@ -87,6 +87,25 @@ bool ehMenorDadoBusca(void* dado1, void* dado2) {
     return dataEhMenor(dado1_busca->dataNascimento, dado2_busca->dataNascimento);
 }
 
+void escreveDadoBusca(void *dado, FILE *arquivo) {
+    dadoBusca *d = (dadoBusca*)dado;
+    // Atenção: como dadoBusca tem char*, gravar o ponteiro direto é erro!
+    // Grave o conteúdo do nome (fixo) e depois a data.
+    fwrite(d->nome, sizeof(char), 100, arquivo); // Exemplo assumindo nome[100]
+    fwrite(&d->dataNascimento, sizeof(Data), 1, arquivo);
+}
+
+void leituraDadoBusca(void *dado, FILE *arquivo) {
+    dadoBusca *d = (dadoBusca*)dado;
+    fread(d->nome, sizeof(char), 100, arquivo);
+    fread(&d->dataNascimento, sizeof(Data), 1, arquivo);
+}
+
+void imprimeChaveDadoBusca(void *dado) {
+    dadoBusca *d = (dadoBusca*)dado;
+    printf("%s (%02d/%02d/%d)", d->nome, d->dataNascimento.dia, d->dataNascimento.mes, d->dataNascimento.ano);
+}
+
 void escreveFuncionario(void *dado, FILE *arquivo) {
     verificaArquivo(arquivo);
     
