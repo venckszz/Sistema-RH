@@ -15,7 +15,6 @@ typedef struct funcionario {
     char nomePai[100];
     char nomeMae[100];
     char telefone[15];
-    double salario;
     Endereco residencia;
     Data nascimento;
     Data contratacao;
@@ -44,4 +43,6 @@ void leituraFuncionario(void *dado, FILE *arquivo);
 
 void imprimeChaveFuncionario(void* dado);
 
-Funcionario criaFuncionario();
+dadoBusca criaDadoBusca();
+
+Funcionario criaFuncionario(char nome[100], Data dataNascimento);

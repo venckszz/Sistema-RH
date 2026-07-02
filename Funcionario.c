@@ -108,19 +108,19 @@ void leituraFuncionario(void *dado, FILE *arquivo) {
 void imprimeChaveFuncionario(void* dado) {
     if (dado == NULL) return;
     
-    Funcionario* funcionario = (Funcionario*)dado;
+    dadoBusca* funcionario = (dadoBusca*)dado;
     
     char primeiroNome[50];
     
     // Extrai apenas a primeira palavra da string 'nome'
-    sscanf(func->nome, "%s", primeiroNome); 
+    sscanf(funcionario->nome, "%s", primeiroNome); 
     
-    printf("%s (%02d/%02d/%04d)", primeiroNome, funcionario->nascimento.dia, funcionario->nascimento.mes, funcionario->nascimento.ano);
+    printf("%s (%02d/%02d/%04d)", primeiroNome, funcionario->dataNascimento.dia, funcionario->dataNascimento.mes, funcionario->dataNascimento.ano);
 }
 
-Funcionario criaFuncionario() {
-    Funcionario novo;
-    memset(&novo, 0, sizeof(Funcionario));
+dadoBusca criaDadoBusca() {
+    dadoBusca novo;
+    memset(&novo, 0, sizeof(dadoBusca));
     
     printf("Nome: ");
     fgets(novo.nome, sizeof(novo.nome), stdin);
@@ -131,6 +131,16 @@ Funcionario criaFuncionario() {
     scanf("%d/%d/%d", &dataNascimento.dia, &dataNascimento.mes, &dataNascimento.ano);
     limpaBuffer();
     verificaData(&dataNascimento);
+    novo.dataNascimento = dataNascimento;
+
+    return novo;
+}
+
+Funcionario criaFuncionario(char nome[100], Data dataNascimento) {
+    Funcionario novo;
+    memset(&novo, 0, sizeof(Funcionario));
+    
+    strcpy(novo.nome, nome);
     novo.nascimento = dataNascimento;
 
     printf("Nome do pai: ");

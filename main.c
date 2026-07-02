@@ -28,7 +28,10 @@ int main(void) {
 
             case 1:
                 printf("\n=== Iniciando o modulo de insercao de funcionario ===\n");
-                Funcionario novoFuncionario = criaFuncionario();
+                dadoBusca dadoFuncionario = criaDadoBusca();
+
+                
+                Funcionario novoFuncionario = criaFuncionario(dadoFuncionario.nome, dadoFuncionario.dataNascimento);
                 break;
             
             case 2:
