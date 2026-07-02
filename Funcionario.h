@@ -11,6 +11,7 @@ typedef struct endereco {
 } Endereco;
 
 typedef struct funcionario {
+    int posRegistro;
     bool registroAtivo;
     int prox_pos_livre;
 
@@ -64,3 +65,5 @@ void inicializaArquivoRegistros(FILE* arquivo);
 Registros* leituraCabecalhoRegistros(FILE* arquivo);
 
 void escreveCabecalhoRegistros(FILE* arquivo, Registros* cabecalho);
+
+int proxRegistro(FILE* arquivo, Registros* cabecalho);

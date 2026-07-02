@@ -124,7 +124,47 @@ void leituraFuncionario(void *dado, FILE *arquivo) {
     fread(funcionario, sizeof(Funcionario), 1, arquivo);
 }
 
-void imprimeChaveFuncionario(void* dado) {
+void imprimeDadosFuncionario(void *dado) {
+    if (dado == NULL) {
+        printf("\nERRO: Registro de funcionário vazio ou inexistente!\n");
+        return;
+    }
+    // Convertendo o ponteiro genérico para a estrutura completa do Funcionário
+    Funcionario *f = (Funcionario*)dado;
+
+    printf("\n========================================================\n");
+    printf("                   FICHA DO FUNCIONARIO                 \n");
+    printf("========================================================\n");
+    printf("Posicao no Arquivo (posRegistro): %d\n", f->posRegistro);
+    printf("Status no Disco: %s\n", f->registroAtivo ? "Ativo" : "Logicamente Excluido");
+    printf("Situacao na Empresa: %s\n", f->atividade ? "Trabalhando (Contrato Ativo)" : "Desligado");
+    printf("--------------------------------------------------------\n");
+    printf("Nome: %s\n", f->nome);
+    printf("Data de Nascimento: %02d/%02d/%04d\n", f->nascimento.dia, f->nascimento.mes, f->nascimento.ano);
+    printf("Telefone: %s\n\n", f->telefone);
+    printf("Filiação:\n");
+    printf("Mãe: %s\n", f->nomeMae);
+    printf("pai: %s\n\n", f->nomePai);
+    printf("Endereço Residencial:\n");
+    printf("Rua: %s, Nº: %d\n", f->residencia.rua, f->residencia.numero);
+    printf("Bairro: %s\n\n", f->residencia.bairro);
+    printf("Informações Contratuais:\n");
+    printf("Data de Contratação: %02d/%02d/%04d\n", f->contratacao.dia, f->contratacao.mes, f->contratacao.ano);
+    
+    // Só imprime a data de desligamento se o funcionário realmente tiver sido desligado
+    if (!f->atividade) {
+        printf("Data de Desligamento: %02d/%02d/%04d\n", f->desligamento.dia, f->desligamento.mes, f->desligamento.ano);
+    } else {
+        printf("Data de Desligamento: N/A (Contrato Ativo)\n\n");
+    }
+    printf("Historico de Pagamentos (ultimos 12 meses):\n");
+    for (int i = 0; i < 12; i++) {
+        printf("  - Mês %02d: R$ %.2f\n", i + 1, f->historicoPagamentos[i]);
+    }
+    printf("========================================================\n");
+}
+
+void imprimeChaveBasicaFuncionario(void* dado) {
     if (dado == NULL) return;
     
     dadoBusca* funcionario = (dadoBusca*)dado;

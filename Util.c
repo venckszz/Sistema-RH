@@ -22,8 +22,7 @@ void verificaArquivo(FILE* arquivo) {
 }
 
 size_t calculaDeslocamentoPagina(int posPagina, size_t tamanho_registro) {
-                                                                        //    posFilhos            posRegistro
-    size_t tamanho_fixo_dados = (sizeof(bool) * 2) + (sizeof(int) * 4) + (sizeof(int) * ORDEM) + (sizeof(int) * ORDEM);
+    size_t tamanho_fixo_dados = (sizeof(bool) * 2) + (sizeof(int) * 4) + (sizeof(int) * ORDEM + 1) + (sizeof(int) * ORDEM);
     
     //Tamanho de acordo com os dados genéricos
     size_t tamanho_chaves = (ORDEM - 1) * tamanho_registro;
