@@ -257,3 +257,59 @@ Funcionario criaFuncionario(char nome[100], Data dataNascimento) {
 
     return novo;
 }
+
+void inicializaArquivoRegistros(FILE* arquivo) {
+    Registros cabecalho;
+    cabecalho.primeira_pos_livre = -1; // -1 indica que não há espaços livres
+    cabecalho.qtd_registros = 0;
+
+    rewind(arquivo);
+    fwrite(&cabecalho, sizeof(Registros), 1, arquivo);
+}
+
+Registros* leituraCabecalhoRegistros(FILE* arquivo) {
+    verificaArquivo(arquivo);
+
+    Registros* novo = mallocSafe(sizeof(Registros));
+
+    rewind(arquivo);
+
+    fread(novo, sizeof(Registros), 1, arquivo);
+
+    return novo;
+}
+
+void escreveCabecalhoRegistros(FILE* arquivo, Registros* cabecalho) {
+    verificaArquivo(arquivo);
+
+    if (cabecalho == NULL) return;
+
+    rewind(arquivo);
+
+    fwrite(cabecalho, sizeof(Registros), 1, arquivo);
+}
+
+int proxRegistro(FILE* arquivo, Registros* cabecalho) {
+    verificaArquivo(arquivo);
+
+    if (cabecalho == NULL) return -1;
+
+    int proxPosLivre;
+
+    if (cabecalho->primeira_pos_livre < 0) {
+        proxPosLivre = cabecalho->qtd_registros;
+        cabecalho->qtd_registros++;
+    }
+    else {
+        Funcionario* livre = mallocSafe(sizeof(Funcionario));
+        fseek(arquivo, sizeof(Registros) + cabecalho->primeira_pos_livre * sizeof(Funcionario), SEEK_SET);
+        fread(livre, sizeof(Funcionario), 1, arquivo);
+
+        proxPosLivre = cabecalho->primeira_pos_livre;
+        cabecalho->primeira_pos_livre = livre->prox_pos_livre;
+        free(livre);
+    }
+
+    escreveCabecalhoRegistros(arquivo, cabecalho);
+    return proxPosLivre;
+}

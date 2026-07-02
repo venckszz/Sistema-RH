@@ -11,6 +11,9 @@ typedef struct endereco {
 } Endereco;
 
 typedef struct funcionario {
+    bool registroAtivo;
+    int prox_pos_livre;
+
     char nome[100];
     char nomePai[100];
     char nomeMae[100];
@@ -31,6 +34,11 @@ typedef struct dadoBusca {
     Data dataNascimento;
 } dadoBusca;
 
+typedef struct registros {
+    int qtd_registros;
+    int primeira_pos_livre;
+} Registros;
+
 void verificaData(Data* data);
 
 bool dataEhMenor(Data a, Data b);
@@ -50,3 +58,9 @@ void imprimeChaveFuncionario(void* dado);
 dadoBusca criaDadoBusca();
 
 Funcionario criaFuncionario(char nome[100], Data dataNascimento);
+
+void inicializaArquivoRegistros(FILE* arquivo);
+
+Registros* leituraCabecalhoRegistros(FILE* arquivo);
+
+void escreveCabecalhoRegistros(FILE* arquivo, Registros* cabecalho);
