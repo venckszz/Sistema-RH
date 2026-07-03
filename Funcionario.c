@@ -93,17 +93,13 @@ void escreveDadoBusca(void *dado, FILE *arquivo) {
     // Grave o conteúdo do nome (fixo) e depois a data.
     fwrite(d->nome, sizeof(char), 100, arquivo); // Exemplo assumindo nome[100]
     fwrite(&d->dataNascimento, sizeof(Data), 1, arquivo);
+    fflush(arquivo);
 }
 
 void leituraDadoBusca(void *dado, FILE *arquivo) {
     dadoBusca *d = (dadoBusca*)dado;
     fread(d->nome, sizeof(char), 100, arquivo);
     fread(&d->dataNascimento, sizeof(Data), 1, arquivo);
-}
-
-void imprimeChaveDadoBusca(void *dado) {
-    dadoBusca *d = (dadoBusca*)dado;
-    printf("%s (%02d/%02d/%d)", d->nome, d->dataNascimento.dia, d->dataNascimento.mes, d->dataNascimento.ano);
 }
 
 void escreveFuncionario(void *dado, FILE *arquivo) {
@@ -113,6 +109,7 @@ void escreveFuncionario(void *dado, FILE *arquivo) {
 
     Funcionario *funcionario = (Funcionario *) dado;
     fwrite(funcionario, sizeof(Funcionario), 1, arquivo);
+    fflush(arquivo);
 }
 
 void leituraFuncionario(void *dado, FILE *arquivo) {
@@ -164,7 +161,7 @@ void imprimeDadosFuncionario(void *dado) {
     printf("========================================================\n");
 }
 
-void imprimeChaveBasicaFuncionario(void* dado) {
+void imprimePrimeiroNomeDataFuncionario(void* dado) {
     if (dado == NULL) return;
     
     dadoBusca* funcionario = (dadoBusca*)dado;
@@ -175,6 +172,11 @@ void imprimeChaveBasicaFuncionario(void* dado) {
     sscanf(funcionario->nome, "%s", primeiroNome); 
     
     printf("%s (%02d/%02d/%04d)", primeiroNome, funcionario->dataNascimento.dia, funcionario->dataNascimento.mes, funcionario->dataNascimento.ano);
+}
+
+void imprimeChaveDadoBusca(void *dado) {
+    dadoBusca *d = (dadoBusca*)dado;
+    printf("%s (%02d/%02d/%d)", d->nome, d->dataNascimento.dia, d->dataNascimento.mes, d->dataNascimento.ano);
 }
 
 dadoBusca criaDadoBusca() {
@@ -305,6 +307,7 @@ void inicializaArquivoRegistros(FILE* arquivo) {
 
     rewind(arquivo);
     fwrite(&cabecalho, sizeof(Registros), 1, arquivo);
+    fflush(arquivo);
 }
 
 Registros* leituraCabecalhoRegistros(FILE* arquivo) {
@@ -327,6 +330,7 @@ void escreveCabecalhoRegistros(FILE* arquivo, Registros* cabecalho) {
     rewind(arquivo);
 
     fwrite(cabecalho, sizeof(Registros), 1, arquivo);
+    fflush(arquivo);
 }
 
 int proxRegistro(FILE* arquivo, Registros* cabecalho) {

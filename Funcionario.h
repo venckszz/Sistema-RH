@@ -54,7 +54,11 @@ void escreveFuncionario(void *dado, FILE *arquivo);
 
 void leituraFuncionario(void *dado, FILE *arquivo);
 
-void imprimeChaveFuncionario(void* dado);
+void imprimeDadosFuncionario(void* dado);
+
+void imprimePrimeiroNomeDataFuncionario(void* dado);
+
+void imprimeChaveDadoBusca(void *dado);
 
 dadoBusca criaDadoBusca();
 

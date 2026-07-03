@@ -1,0 +1,662 @@
+1
+Adriano Alves
+13/08/1998
+Yasmin Araujo
+Gabriel Monteiro
+Rua Vitoria
+322
+Centro
+27919862625
+13/08/2017
+1
+1
+Aline Carvalho
+18/03/1982
+Zeca Santos
+Fernanda Araujo
+Rua Sete de Setembro
+640
+Centro
+27959307653
+18/03/2001
+1
+1
+Aline Martins
+15/09/1998
+Carlos Pereira
+Yago Almeida
+Rua XV de Novembro
+75
+Centro
+27965391344
+15/09/2017
+1
+1
+Aline Pereira
+19/04/1972
+Flavia Souza
+Olivia Martins
+Rua Vitoria
+683
+Centro
+27995656183
+19/04/1991
+1
+1
+Ana Costa
+23/11/1973
+Flavia Souza
+Igor Carvalho
+Rua das Flores
+890
+Centro
+27964132160
+23/11/1992
+1
+1
+Ana Gomes
+25/03/1986
+Karina Cardoso
+Queila Pereira
+Rua Vitoria
+584
+Centro
+27911582832
+25/03/2005
+1
+1
+Beatriz Barbosa
+10/07/2001
+Cassio Melo
+Sabrina Melo
+Av. Central
+232
+Centro
+27919589883
+10/07/2020
+1
+1
+Beatriz Melo
+26/11/1985
+Rafael Monteiro
+Gustavo Oliveira
+Av. Brasil
+401
+Centro
+27916348711
+26/11/2004
+1
+1
+Bernardo Barbosa
+28/12/1973
+Xavier Costa
+Yago Almeida
+Rua Vitoria
+755
+Centro
+27965592790
+28/12/1992
+1
+1
+Carlos Ferreira
+10/12/1988
+Flavia Souza
+Mirela Souza
+Rua XV de Novembro
+956
+Centro
+27953344241
+10/12/2007
+1
+1
+Cassio Gomes
+13/05/1974
+Yasmin Araujo
+Pedro Teixeira
+Rua Beira Mar
+227
+Centro
+27991797482
+13/05/1993
+1
+1
+Daniela Cardoso
+16/09/2003
+Xavier Costa
+Queila Pereira
+Av. Brasil
+881
+Centro
+27940442122
+16/09/2022
+1
+1
+Eduardo Cardoso
+21/11/1973
+Natan Carvalho
+Sabrina Melo
+Av. Central
+97
+Centro
+27950662940
+21/11/1992
+1
+1
+Emerson Martins
+19/09/1979
+Natan Carvalho
+Fernanda Araujo
+Rua das Flores
+325
+Centro
+27969741653
+19/09/1998
+1
+1
+Giovanna Ferreira
+09/07/2001
+Zeca Santos
+Patricia Ferreira
+Rua Beira Mar
+694
+Centro
+27976243704
+09/07/2020
+1
+1
+Giovanna Silva
+04/06/1989
+Xavier Costa
+Igor Carvalho
+Rua XV de Novembro
+909
+Centro
+27922902403
+04/06/2008
+1
+1
+Gustavo Pereira
+05/11/1980
+Leonardo Silva
+Fernanda Araujo
+Av. Brasil
+404
+Centro
+27972528668
+05/11/1999
+1
+1
+Helena Monteiro
+25/12/1981
+Cassio Melo
+Pedro Teixeira
+Alameda dos Anjos
+293
+Centro
+27995955636
+25/12/2000
+1
+1
+Heloisa Barbosa
+08/08/1994
+Gabriel Almeida
+Tomas Costa
+Alameda dos Anjos
+881
+Centro
+27963253979
+08/08/2013
+1
+1
+Henrique Pereira
+28/11/1989
+Leonardo Silva
+Carlos Rodrigues
+Rua XV de Novembro
+166
+Centro
+27971263646
+28/11/2008
+1
+1
+Igor Ferreira
+24/09/1986
+Fernanda Martins
+William Barbosa
+Rua Vitoria
+380
+Centro
+27945933266
+24/09/2005
+1
+1
+Igor Martins
+03/04/1993
+Rafael Monteiro
+Gabriel Monteiro
+Alameda dos Anjos
+863
+Centro
+27999005956
+03/04/2012
+1
+1
+Igor Melo
+06/05/1999
+Flavia Souza
+Igor Carvalho
+Alameda dos Anjos
+837
+Centro
+27926041828
+06/05/2018
+1
+1
+Igor Ribeiro
+18/03/1986
+Leonardo Silva
+Carlos Rodrigues
+Rua Vitoria
+997
+Centro
+27944709835
+18/03/2005
+1
+1
+Ivan Cardoso
+23/01/1994
+Gabriel Almeida
+Camila Ribeiro
+Rua Beira Mar
+315
+Centro
+27973897865
+23/01/2013
+1
+1
+Jaqueline Araujo
+19/10/1971
+Fernanda Martins
+Bruno Silva
+Rua Sete de Setembro
+897
+Centro
+27985643977
+19/10/1990
+1
+1
+Joao Melo
+22/06/1974
+Joao Oliveira
+Carlos Rodrigues
+Rua das Flores
+879
+Centro
+27978829031
+22/06/1993
+1
+1
+Karina Alves
+12/07/1991
+Karina Cardoso
+Beatriz Cardoso
+Av. Central
+323
+Centro
+27951184777
+12/07/2010
+1
+1
+Leonardo Almeida
+15/12/1986
+Rafael Monteiro
+Beatriz Cardoso
+Av. Brasil
+806
+Centro
+27936836096
+15/12/2005
+1
+1
+Leonardo Araujo
+13/12/1982
+Yasmin Araujo
+Bruno Silva
+Rua XV de Novembro
+114
+Centro
+27959412983
+13/12/2001
+1
+1
+Leonardo Carvalho
+16/08/1998
+Rafael Monteiro
+Tomas Costa
+Rua das Flores
+268
+Centro
+27988272869
+16/08/2017
+1
+1
+Mariana Alves
+15/01/1985
+Karina Cardoso
+Yago Almeida
+Rua Sete de Setembro
+830
+Centro
+27986129702
+15/01/2004
+1
+1
+Natan Alves
+04/07/1982
+Xavier Costa
+Gustavo Oliveira
+Rua Vitoria
+11
+Centro
+27995189821
+04/07/2001
+1
+1
+Natan Santos
+18/12/1985
+Karina Cardoso
+Queila Pereira
+Rua Vitoria
+286
+Centro
+27945986313
+18/12/2004
+1
+1
+Olivia Barbosa
+11/06/1994
+Fernanda Martins
+Gustavo Oliveira
+Av. Central
+864
+Centro
+27923418705
+11/06/2013
+1
+1
+Olivia Melo
+26/10/1990
+Karina Cardoso
+Mirela Souza
+Alameda dos Anjos
+701
+Centro
+27945019375
+26/10/2009
+1
+1
+Olivia Monteiro
+05/12/2000
+Thiago Rodrigues
+Igor Carvalho
+Rua Vitoria
+204
+Centro
+27925452588
+05/12/2019
+1
+1
+Otavio Alves
+14/09/1998
+Thiago Rodrigues
+Queila Pereira
+Alameda dos Anjos
+275
+Centro
+27950505543
+14/09/2017
+1
+1
+Otavio Costa
+15/07/1982
+Thiago Rodrigues
+Joao Santos
+Rua Vitoria
+259
+Centro
+27934171090
+15/07/2001
+1
+1
+Pedro Cardoso
+19/01/1987
+Xavier Costa
+William Barbosa
+Rua Sete de Setembro
+491
+Centro
+27995028245
+19/01/2006
+1
+1
+Queila Rodrigues
+13/03/1989
+Joao Oliveira
+Mirela Souza
+Av. Brasil
+19
+Centro
+27985082638
+13/03/2008
+1
+1
+Rafael Costa
+06/04/1981
+Flavia Souza
+Heloisa Gomes
+Rua Sete de Setembro
+12
+Centro
+27976938381
+06/04/2000
+1
+1
+Rodrigo Oliveira
+09/03/1974
+Rafael Monteiro
+Helena Alves
+Av. Central
+619
+Centro
+27957288195
+09/03/1993
+1
+1
+Rodrigo Ribeiro
+15/01/1975
+Carlos Pereira
+Gabriel Monteiro
+Rua Vitoria
+718
+Centro
+27949866016
+15/01/1994
+1
+1
+Sabrina Alves
+18/08/1998
+Leonardo Silva
+Bruno Silva
+Rua das Flores
+920
+Centro
+27980786280
+18/08/2017
+1
+1
+Sabrina Barbosa
+03/12/1988
+Ximena Barbosa
+Igor Carvalho
+Rua Beira Mar
+337
+Centro
+27998492320
+03/12/2007
+1
+1
+Sandra Monteiro
+10/11/1976
+Ximena Barbosa
+Sabrina Melo
+Av. Brasil
+921
+Centro
+27927533546
+10/11/1995
+1
+1
+Sandra Pereira
+12/09/1996
+Natan Carvalho
+Olivia Martins
+Rua XV de Novembro
+895
+Centro
+27936623900
+12/09/2015
+1
+1
+Thiago Alves
+22/11/1991
+Carlos Pereira
+Bruno Silva
+Av. Central
+240
+Centro
+27942623414
+22/11/2010
+1
+1
+Tomas Monteiro
+11/01/1977
+Rafael Monteiro
+Gustavo Oliveira
+Av. Central
+49
+Centro
+27927768119
+11/01/1996
+1
+1
+Tomas Pereira
+22/09/1987
+Ivan Ferreira
+Tomas Costa
+Av. Central
+455
+Centro
+27935918433
+22/09/2006
+1
+1
+Ursula Ferreira
+08/01/1982
+Joao Oliveira
+Joao Santos
+Av. Central
+895
+Centro
+27921375573
+08/01/2001
+1
+1
+Valentina Oliveira
+23/04/1974
+Fernanda Martins
+Fernanda Araujo
+Rua Beira Mar
+565
+Centro
+27986337812
+23/04/1993
+1
+1
+Wesley Rodrigues
+20/12/1987
+Gabriel Almeida
+Heloisa Gomes
+Rua XV de Novembro
+97
+Centro
+27949547658
+20/12/2006
+1
+1
+William Gomes
+07/11/1986
+Thiago Rodrigues
+Carlos Rodrigues
+Av. Central
+937
+Centro
+27918322512
+07/11/2005
+1
+1
+William Oliveira
+14/03/2003
+Leonardo Silva
+Gustavo Oliveira
+Alameda dos Anjos
+486
+Centro
+27981365397
+14/03/2022
+1
+1
+Xavier Ferreira
+21/02/1972
+Carlos Pereira
+Patricia Ferreira
+Rua XV de Novembro
+869
+Centro
+27913333496
+21/02/1991
+1
+1
+Yasmin Melo
+03/11/1991
+Joao Oliveira
+Olivia Martins
+Av. Brasil
+747
+Centro
+27959209308
+03/11/2010
+1
+1
+Yasmin Santos
+10/01/1978
+Xavier Costa
+Gustavo Oliveira
+Rua das Flores
+576
+Centro
+27957863068
+10/01/1997
+1
+1
+Zilda Ferreira
+06/07/2001
+Cassio Melo
+Camila Ribeiro
+Rua Vitoria
+934
+Centro
+27919603697
+06/07/2020
+1
+5
+6
