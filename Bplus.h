@@ -1,7 +1,17 @@
+/**
+ * @file Bplus.h
+ * @brief Arquivo cabeçalho responsável por guardar todas as assinaturas de funções e estruturas utilizadas no código fonte da Bplus(árvore B+).
+ * @author Grupo 1: Jonathan Alves Bispo da Paz [2024200497], Leandro Brognoli Grazziotin [2024200523] e Victor da Rocha Toniato [2024200493].
+ * @date 05/07/2026
+ */
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
+/** @brief Indica a ordem utilizada para estruturar a árvore Bplus */
 #define ORDEM 5
+
 
 typedef struct pagina {
     bool pagina_ativa;
@@ -71,7 +81,7 @@ void insereNoPai(Pagina* pai, Bplus* cabecalho, void* novo_dado, int indiceFilho
 
 Pagina* splitInterno(Pagina* pagina, Bplus* cabecalho);
 
-int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoRemover, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*));
+int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*));
 
 void concatenaBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pai, int indiceFilhoEsq, Pagina* irmaoEsq, Pagina* irmaoDir, void (*escreveDado)(void*, FILE*));
 

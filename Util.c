@@ -1,3 +1,10 @@
+/**
+ * @file Util.c
+ * @brief Arquivo do código fonte responsável por toda implementação de funções auxiliares utilizadas nos códigos fontes: Bplus e Funcionario.
+ * @author Grupo 1: Jonathan Alves Bispo da Paz [2024200497], Leandro Brognoli Grazziotin [2024200523] e Victor da Rocha Toniato [2024200493].
+ * @date 05/07/2026
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +29,6 @@ void verificaArquivo(FILE* arquivo) {
 }
 
 size_t calculaDeslocamentoPagina(int posPagina, size_t tamanho_registro) {
-                                                                        //    posFilhos            posRegistro
     size_t tamanho_fixo_dados = (sizeof(bool) * 2) + (sizeof(int) * 4) + (sizeof(int) * ORDEM) + (sizeof(int) * ORDEM);
     
     //Tamanho de acordo com os dados genéricos

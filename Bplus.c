@@ -1,3 +1,10 @@
+/**
+ * @file Bplus.c
+ * @brief Arquivo do código fonte responsável por toda implementação de estrutura e funcionamento da Bplus(árvore B+).
+ * @author Grupo 1: Jonathan Alves Bispo da Paz [2024200497], Leandro Brognoli Grazziotin [2024200523] e Victor da Rocha Toniato [2024200493].
+ * @date 05/07/2026
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -13,6 +20,8 @@ void abreBplus(FILE* arquivo, size_t tamanho_dado) {
     verificaArquivo(arquivo);
     
     Bplus cabecalho;
+    memset(&cabecalho, 0, sizeof(Bplus));
+
     cabecalho.ordem = ORDEM;
     cabecalho.prox_pos_livre = -1;
     cabecalho.qtd_paginas = 0;
@@ -21,7 +30,6 @@ void abreBplus(FILE* arquivo, size_t tamanho_dado) {
 
     rewind(arquivo);
     fwrite(&cabecalho, sizeof(Bplus), 1, arquivo);
-    fflush(arquivo);
 }
 
 void fechaBplus(FILE* arquivo, Bplus* cabecalho) {
@@ -226,7 +234,7 @@ Pagina* buscaDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoBuscado, int* 
     i = 0;
     
     // O laço para de avançar assim que achar um elemento que não é menor que o dado buscado.
-    while (i < paginaAtual->qtd_chaves_atuais && !ehMenor(dadoBuscado, paginaAtual->chaves[i])) {
+    while (i < paginaAtual->qtd_chaves_atuais && ehMenor(paginaAtual->chaves[i], dadoBuscado)) {
         i++;
     }
     
@@ -304,8 +312,13 @@ int insereBplus(FILE* arquivo, Bplus* cabecalho, void* novo_dado, int posRegistr
 
     i = 0;
 
-    while (i < paginaAtual->qtd_chaves_atuais && !ehMenor(novo_dado, paginaAtual->chaves[i])) {
+    while (i < paginaAtual->qtd_chaves_atuais && ehMenor(paginaAtual->chaves[i], novo_dado)) {
         i++;
+    }
+
+    if (i < paginaAtual->qtd_chaves_atuais && !ehMenor(novo_dado, paginaAtual->chaves[i]) && !ehMenor(paginaAtual->chaves[i], novo_dado)) {
+        liberaPaginaRAM(paginaAtual);
+        return 42; //Retorno específico para o caso dos dois iguais
     }
 
     insereNaFolha(paginaAtual, cabecalho, novo_dado, posRegistro, ehMenor);
@@ -444,7 +457,7 @@ void insereNaFolha(Pagina* pagina, Bplus* cabecalho, void* novo_dado, int indice
     int i = 0;
 
     // Procura a posição correta de inserção
-    while (i < pagina->qtd_chaves_atuais && !ehMenor(novo_dado, pagina->chaves[i])) {
+    while (i < pagina->qtd_chaves_atuais && ehMenor(pagina->chaves[i], novo_dado)) {
         i++;
     }
     
@@ -527,10 +540,10 @@ Pagina* splitInterno(Pagina* pagina, Bplus* cabecalho) {
     return nova;
 }
 
-int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoRemover, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*)) {
+int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*)) {
     verificaArquivo(arquivo);
 
-    if (cabecalho == NULL || pagina == NULL) return - 1;
+    if (cabecalho == NULL || cabecalho->raiz == -1) return - 1;
     
     int i = 0;
     int aux = 0;
@@ -538,6 +551,10 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoR
     int indices_filhos[MAX_ALTURA];
     int posicoes_pais[MAX_ALTURA];
     
+    Pagina* pagina = leituraPagina(arquivo, cabecalho, cabecalho->raiz, leituraDado);
+
+    if (pagina == NULL) return -1;
+
     while (!pagina->ehFolha) {
         i = 0;
 
@@ -559,7 +576,7 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoR
 
     i = 0;
 
-    while (i < pagina->qtd_chaves_atuais && !ehMenor(dadoRemover, pagina->chaves[i])) {
+    while (i < pagina->qtd_chaves_atuais && ehMenor(pagina->chaves[i], dadoRemover)) {
         i++;
     }
     
@@ -571,6 +588,7 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoR
     }
 
     int posRegistroNoArquivo = pagina->posRegistro[i];
+    bool removeuPrimeiraChave = (i == 0);
     
     // Move os elementos 1 posição à esquerda
     for (int j = i; j < pagina->qtd_chaves_atuais - 1; j++) {
@@ -597,6 +615,22 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoR
     }
 
     if (pagina->qtd_chaves_atuais >= MIN_CHAVES) {
+        if (removeuPrimeiraChave && aux > 0) {
+            int posPaiAtualizar = posicoes_pais[aux - 1];
+            int indiceFilhoAtualizar = indices_filhos[aux - 1];
+
+            if (indiceFilhoAtualizar > 0) {
+                Pagina* paiAtualizar = leituraPagina(arquivo, cabecalho, posPaiAtualizar, leituraDado);
+
+                memcpy(paiAtualizar->chaves[indiceFilhoAtualizar - 1],
+                    pagina->chaves[0],
+                    cabecalho->tamanho_registro);
+
+                escrevePagina(arquivo, cabecalho, paiAtualizar, escreveDado);
+                liberaPaginaRAM(paiAtualizar);
+            }
+        }
+
         escrevePagina(arquivo, cabecalho, pagina, escreveDado);
         escreveCabecalhoBplus(arquivo, cabecalho);
         liberaPaginaRAM(pagina);
@@ -628,12 +662,11 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoR
     else {
         if (irmaoDirFolha != NULL) {
             concatenaBplus(arquivo, cabecalho, pai, indiceFilho, pagina, irmaoDirFolha, escreveDado);
-            if (irmaoEsqFolha) 
-                liberaPaginaRAM(irmaoEsqFolha);
+            if (irmaoEsqFolha) liberaPaginaRAM(irmaoEsqFolha);
         }
     }
 
-   // Verifica se a concatenação da folha deixou o PAI em underflow
+   // Verifica se a concatenação da folha deixou o 'pai' em underflow
     if (pai->qtd_chaves_atuais >= MIN_CHAVES || pai->posPagina == cabecalho->raiz) {
         escreveCabecalhoBplus(arquivo, cabecalho);
         liberaPaginaRAM(pai);
@@ -642,24 +675,20 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoR
 
     aux--;
 
-
     while(pai->qtd_chaves_atuais < MIN_CHAVES) {
         if (pai->posPagina == cabecalho->raiz) {
-            // Regra 22 da Imagem: Se a raiz interna ficou com 0 chaves, o filho único vira raiz
             if (pai->qtd_chaves_atuais == 0) {
                 cabecalho->raiz = pai->posFilhos[0];
                 liberaLogicamentePagina(arquivo, cabecalho, pai, escreveDado);
                 escreveCabecalhoBplus(arquivo, cabecalho);
-            } 
-            else {
-                // Regra 23 da Imagem: Raiz com pelo menos 1 chave está OK. Apenas salva.
-                escrevePagina(arquivo, cabecalho, pai, escreveDado);
             }
+
+            else escrevePagina(arquivo, cabecalho, pai, escreveDado);
+            
             liberaPaginaRAM(pai);
             return posRegistroNoArquivo;
         }
 
-        // Se não é a raiz, precisamos do AVÔ para resolver o problema do PAI
         int posAvo = posicoes_pais[aux - 1];
         int indicePaiNoAvo = indices_filhos[aux - 1];
         Pagina* avo = leituraPagina(arquivo, cabecalho, posAvo, leituraDado);
@@ -672,7 +701,7 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoR
             return posRegistroNoArquivo;
         }
 
-        // Se a redistribuição falhou, faz a concatenação dos NÓS INTERNOS (buscando os "Tios")
+        // Se a redistribuição falhou, faz a concatenação dos nós internos
         Pagina* tioEsq = (indicePaiNoAvo > 0) ? leituraPagina(arquivo, cabecalho, avo->posFilhos[indicePaiNoAvo - 1], leituraDado) : NULL;
         Pagina* tioDir = (indicePaiNoAvo < avo->qtd_chaves_atuais) ? leituraPagina(arquivo, cabecalho, avo->posFilhos[indicePaiNoAvo + 1], leituraDado) : NULL;
 
@@ -687,14 +716,12 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void* dadoR
                 liberaPaginaRAM(tioEsq);
         }
 
-        // O 'pai' foi fundido com um tio e liberado. 
-        // Agora o 'avo' pode ter ficado em underflow! Atualizamos as variáveis para o while repetir.
+        
         liberaPaginaRAM(pai);
-        pai = avo; // O avô se torna o nó deficiente da próxima rodada
+        pai = avo;
         aux--;
     }
 
-    // Se saiu do while, significa que a propagação parou e o nó atual tem chaves suficientes
     escrevePagina(arquivo, cabecalho, pai, escreveDado);
     escreveCabecalhoBplus(arquivo, cabecalho);
     liberaPaginaRAM(pai);
@@ -830,11 +857,16 @@ void imprimeArvoreBplus(FILE* arquivo, Bplus* cabecalho, int posAtual, int profu
         printf("        ");
     }
 
-    if (p->ehFolha) 
-        printf("[FOLHA | posicao: %d]", p->posPagina);
+    if (cabecalho->raiz == posAtual)
+        printf("[RAIZ | posicao: %d] ", p->posPagina);
 
     else
-        printf("[INTERNO | posicao: %d]", p->posPagina);
+
+    if (p->ehFolha) 
+        printf("[FOLHA | posicao: %d] ", p->posPagina);
+
+    else
+        printf("[INTERNO | posicao: %d] ", p->posPagina);
 
     for (int i = 0; i < p->qtd_chaves_atuais; i++) {
         imprimeChave(p->chaves[i]);
@@ -887,10 +919,3 @@ void buscaIntervaloBplus(FILE* arquivo, Bplus* cabecalho, void* limite_inferior,
         indiceBusca = 0;
     }  
 }
-
-
-
-
-
-
-

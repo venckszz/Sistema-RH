@@ -1,3 +1,10 @@
+/**
+ * @file Funcionario.c
+ * @brief Arquivo do código fonte responsável por toda implementação de estrutura e funcionamento do tratamento e amarzenamento dos dados do funcionario.
+ * @author Grupo 1: Jonathan Alves Bispo da Paz [2024200497], Leandro Brognoli Grazziotin [2024200523] e Victor da Rocha Toniato [2024200493].
+ * @date 05/07/2026
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,7 +56,7 @@ void verificaData(Data* data) {
             scanf("%d", &data->dia);
             limpaBuffer();
 
-            // Como o dia mudou, reiniciamos o laço para garantir que a data e valida
+            // Como o dia mudou, reiniciamos o laço para garantir que a data é valida
             dataValida = false;
 
         } else {
@@ -58,15 +65,15 @@ void verificaData(Data* data) {
     }
 }
 
-bool dataEhMenor(Data a, Data b) {
-    if (a.ano < b.ano) return true;
-    if (a.ano > b.ano) return false;
+bool dataEhMenor(Data dataA, Data dataB) {
+    if (dataA.ano < dataB.ano) return true;
+    if (dataA.ano > dataB.ano) return false;
 
-    if (a.mes < b.mes) return true;
-    if (a.mes > b.mes) return false;
-
-    if (a.dia < b.dia) return true;
-    if (a.dia > b.dia) return false;
+    if (dataA.mes < dataB.mes) return true;
+    if (dataA.mes > dataB.mes) return false;
+    
+    if (dataA.dia < dataB.dia) return true;
+    if (dataA.dia > dataB.dia) return false;
 
     return false;
 }
@@ -102,25 +109,6 @@ void leituraDadoBusca(void *dado, FILE *arquivo) {
     fread(&d->dataNascimento, sizeof(Data), 1, arquivo);
 }
 
-void escreveFuncionario(void *dado, FILE *arquivo) {
-    verificaArquivo(arquivo);
-    
-    if (dado == NULL) return;
-
-    Funcionario *funcionario = (Funcionario *) dado;
-    fwrite(funcionario, sizeof(Funcionario), 1, arquivo);
-    fflush(arquivo);
-}
-
-void leituraFuncionario(void *dado, FILE *arquivo) {
-    verificaArquivo(arquivo);
-    
-    if (dado == NULL) return;
-
-    Funcionario *funcionario = (Funcionario *) dado;
-    fread(funcionario, sizeof(Funcionario), 1, arquivo);
-}
-
 void imprimeDadosFuncionario(void *dado) {
     if (dado == NULL) {
         printf("\nERRO: Registro de funcionário vazio ou inexistente!\n");
@@ -149,14 +137,17 @@ void imprimeDadosFuncionario(void *dado) {
     printf("Data de Contratação: %02d/%02d/%04d\n", f->contratacao.dia, f->contratacao.mes, f->contratacao.ano);
     
     // Só imprime a data de desligamento se o funcionário realmente tiver sido desligado
-    if (!f->atividade) {
-        printf("Data de Desligamento: %02d/%02d/%04d\n", f->desligamento.dia, f->desligamento.mes, f->desligamento.ano);
-    } else {
-        printf("Data de Desligamento: N/A (Contrato Ativo)\n\n");
-    }
-    printf("Historico de Pagamentos (ultimos 12 meses):\n");
-    for (int i = 0; i < 12; i++) {
-        printf("  - Mês %02d: R$ %.2f\n", i + 1, f->historicoPagamentos[i]);
+    if (!f->atividade) printf("Data de Desligamento: %02d/%02d/%04d\n", f->desligamento.dia, f->desligamento.mes, f->desligamento.ano);
+    
+    else printf("Data de Desligamento: N/A (Contrato Ativo)\n\n");
+    
+    printf("\nHistorico de pagamentos:\n");
+
+    if (f->qtdPagamentos == 0) printf("Nenhum pagamento cadastrado.\n");
+    else {
+        for (int i = 0; i < f->qtdPagamentos; i++) {
+            printf("%dº pagamento mais recente: R$ %.2lf\n", i + 1, f->historicoPagamentos[i]);
+        }
     }
     printf("========================================================\n");
 }
@@ -165,12 +156,10 @@ void imprimePrimeiroNomeDataFuncionario(void* dado) {
     if (dado == NULL) return;
     
     dadoBusca* funcionario = (dadoBusca*)dado;
-    
     char primeiroNome[50];
     
     // Extrai apenas a primeira palavra da string 'nome'
     sscanf(funcionario->nome, "%s", primeiroNome); 
-    
     printf("%s (%02d/%02d/%04d)", primeiroNome, funcionario->dataNascimento.dia, funcionario->dataNascimento.mes, funcionario->dataNascimento.ano);
 }
 
@@ -200,6 +189,10 @@ dadoBusca criaDadoBusca() {
 Funcionario criaFuncionario(char nome[100], Data dataNascimento) {
     Funcionario novo;
     memset(&novo, 0, sizeof(Funcionario));
+    novo.posRegistro = -1;
+    novo.registroAtivo = true;
+    novo.prox_pos_livre = -1;
+    novo.qtdPagamentos = 0;
     
     strcpy(novo.nome, nome);
     novo.nascimento = dataNascimento;
@@ -213,6 +206,7 @@ Funcionario criaFuncionario(char nome[100], Data dataNascimento) {
     novo.nomeMae[strcspn(novo.nomeMae, "\n")] = '\0';
 
     Endereco residencia;
+    memset(&residencia, 0, sizeof(Endereco));
     printf("Rua da residencia: ");
     fgets(residencia.rua, sizeof(residencia.rua), stdin);
     residencia.rua[strcspn(residencia.rua, "\n")] = '\0';
@@ -243,20 +237,6 @@ Funcionario criaFuncionario(char nome[100], Data dataNascimento) {
     scanf("%d/%d/%d", &dataContratacao.dia, &dataContratacao.mes, &dataContratacao.ano);
     limpaBuffer();
     verificaData(&dataContratacao);
-
-    // Verifica se o funcionário possui idade para trabalhar
-    Data maioridade;
-    maioridade.dia = novo.nascimento.dia;
-    maioridade.mes = novo.nascimento.mes;
-    maioridade.ano = novo.nascimento.ano + 18;
-    
-    while (dataEhMenor(dataContratacao, maioridade)) {
-        printf("\nERRO! O funcionario nao possui idade minima (18 anos) para trabalhar!\n");
-        printf("Data de Contratacao (DD/MM/AAAA): ");
-        scanf("%d/%d/%d", &dataContratacao.dia, &dataContratacao.mes, &dataContratacao.ano);
-        limpaBuffer();
-        verificaData(&dataContratacao);
-    }
     novo.contratacao = dataContratacao;
 
     int statusContrato;
@@ -280,12 +260,13 @@ Funcionario criaFuncionario(char nome[100], Data dataNascimento) {
     }
     else {
         Data dataDesligamento;
+
         printf("Data de Desligamento no formato (DD/MM/AAAA): ");
         scanf("%d/%d/%d", &dataDesligamento.dia, &dataDesligamento.mes, &dataDesligamento.ano);
         limpaBuffer();
 
         while (dataEhMenor(dataDesligamento, novo.contratacao)) {
-            printf("\n ERRO! Data invalida para o desligamento! Deve ser apos a contratacao. Inserir novamente...\n");
+            printf("\nERRO! Data invalida para o desligamento! Deve ser apos a contratacao.\n");
             printf("Data de Desligamento no formato (DD/MM/AAAA): ");
             scanf("%d/%d/%d", &dataDesligamento.dia, &dataDesligamento.mes, &dataDesligamento.ano);
             limpaBuffer();
@@ -296,27 +277,71 @@ Funcionario criaFuncionario(char nome[100], Data dataNascimento) {
     }
 
     memset(novo.historicoPagamentos, 0, sizeof(novo.historicoPagamentos));
+    novo.qtdPagamentos = 0;
+
+    int desejaCadastrarPagamento;
+
+    printf("\nDeseja cadastrar pagamentos no historico? [1 - Sim | 0 - Nao]: ");
+    scanf("%d", &desejaCadastrarPagamento);
+    limpaBuffer();
+
+    while (desejaCadastrarPagamento != 1 && desejaCadastrarPagamento != 0) {
+        printf("Entrada invalida! Digite novamente.\n");
+        printf("Deseja cadastrar pagamentos no historico? [1 - Sim | 0 - Nao]: ");
+        scanf("%d", &desejaCadastrarPagamento);
+        limpaBuffer();
+    }
+
+    if (desejaCadastrarPagamento == 1) {
+        int quantidade;
+
+        printf("Quantos pagamentos deseja cadastrar? [0 a 12]: ");
+        scanf("%d", &quantidade);
+        limpaBuffer();
+
+        while (quantidade < 0 || quantidade > 12) {
+            printf("Quantidade invalida! Digite um valor entre 0 e 12.\n");
+            printf("Quantos pagamentos deseja cadastrar? [0 a 12]: ");
+            scanf("%d", &quantidade);
+            limpaBuffer();
+        }
+
+        for (int i = 0; i < quantidade; i++) {
+            double valor;
+
+            printf("Valor do pagamento %d: R$ ", i + 1);
+            scanf("%lf", &valor);
+            limpaBuffer();
+
+            while (valor <= 0) {
+                printf("Valor invalido! Digite um pagamento positivo: R$ ");
+                scanf("%lf", &valor);
+                limpaBuffer();
+            }
+
+            adicionaPagamento(&novo, valor);
+        }
+    }
 
     return novo;
 }
 
 void inicializaArquivoRegistros(FILE* arquivo) {
     Registros cabecalho;
-    cabecalho.primeira_pos_livre = -1; // -1 indica que não há espaços livres
+    memset(&cabecalho, 0, sizeof(Registros));
+
+    cabecalho.primeira_pos_livre = -1;
     cabecalho.qtd_registros = 0;
 
     rewind(arquivo);
     fwrite(&cabecalho, sizeof(Registros), 1, arquivo);
-    fflush(arquivo);
 }
 
 Registros* leituraCabecalhoRegistros(FILE* arquivo) {
     verificaArquivo(arquivo);
 
     Registros* novo = mallocSafe(sizeof(Registros));
-
     rewind(arquivo);
-
     fread(novo, sizeof(Registros), 1, arquivo);
 
     return novo;
@@ -328,7 +353,6 @@ void escreveCabecalhoRegistros(FILE* arquivo, Registros* cabecalho) {
     if (cabecalho == NULL) return;
 
     rewind(arquivo);
-
     fwrite(cabecalho, sizeof(Registros), 1, arquivo);
     fflush(arquivo);
 }
@@ -356,4 +380,32 @@ int proxRegistro(FILE* arquivo, Registros* cabecalho) {
 
     escreveCabecalhoRegistros(arquivo, cabecalho);
     return proxPosLivre;
+}
+
+void adicionaPagamento(Funcionario* funcionario, double valor) {
+    if (funcionario == NULL) return;
+
+    if (valor <= 0) {
+        printf("\nERRO! O valor do pagamento deve ser positivo.\n");
+        return;
+    }
+
+    // Caso em que o funcionário tenha menos de 12 pagamentos registrados
+    if (funcionario->qtdPagamentos < 12) {
+        for (int i = funcionario->qtdPagamentos; i > 0; i--) {
+            funcionario->historicoPagamentos[i] = funcionario->historicoPagamentos[i - 1];
+        }
+
+        funcionario->historicoPagamentos[0] = valor;
+        funcionario->qtdPagamentos++;
+    } 
+    else {
+
+        // Caso o funcionário já tem 12 pagamentos registrados, então o mais antigo é descartado
+        for (int i = 11; i > 0; i--) {
+            funcionario->historicoPagamentos[i] = funcionario->historicoPagamentos[i - 1];
+        }
+
+        funcionario->historicoPagamentos[0] = valor;
+    }
 }
