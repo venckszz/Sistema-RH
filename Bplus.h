@@ -49,7 +49,7 @@ typedef struct Bplus {
 } Bplus;
 
 
-void abreBplus(FILE* arquivo, size_t tamanho_dado);
+void inicializaBplus(FILE* arquivo, size_t tamanho_dado);
 
 void fechaBplus(FILE* arquivo, Bplus* cabecalho);
 

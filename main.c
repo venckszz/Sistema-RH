@@ -32,7 +32,7 @@ int main(void) {
     
     Bplus* cabecalhoBplus = leituraCabecalhoBplus(arvore);
     if (cabecalhoBplus == NULL) {
-        abreBplus(arvore, sizeof(dadoBusca));
+        inicializaBplus(arvore, sizeof(dadoBusca));
         cabecalhoBplus = leituraCabecalhoBplus(arvore);
     }
     
