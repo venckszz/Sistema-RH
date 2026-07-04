@@ -140,7 +140,7 @@ int main(void) {
                 printf("Insira o nome completo do funcionario buscado: ");
                 fgets(consulta.nome, sizeof(consulta.nome), stdin);
 
-                consulta.nome[strcspn(consulta.nome, "\n")] = '\0';
+                consulta.nome[strcspn(consulta.nome, "\r\n")] = '\0';
 
                 consulta.dataNascimento.dia = 1;
                 consulta.dataNascimento.mes = 1;
@@ -153,7 +153,7 @@ int main(void) {
                 dadoBusca chavesEncontradas[50];
                 int qtdEncontrados = 0;
                 
-                // 4. Varredura horizontal pelas folhas (aproveitando a lista encadeada da Árvore B+)
+                // Percorre as chaves através da lista ordenada encadeada entre as folhas
                 while (paginaAtual != NULL) {
                     for (int i = indiceBusca; i < paginaAtual->qtd_chaves_atuais; i++) {
                         dadoBusca* chaveAtual = (dadoBusca*)paginaAtual->chaves[i];
@@ -248,7 +248,7 @@ int main(void) {
 
                 printf("Digite o nome completo do funcionario a excluir: ");
                 fgets(consulta.nome, sizeof(consulta.nome), stdin);
-                consulta.nome[strcspn(consulta.nome, "\n")] = '\0';
+                consulta.nome[strcspn(consulta.nome, "\r\n")] = '\0';
 
                 consulta.dataNascimento.dia = 1;
                 consulta.dataNascimento.mes = 1;
@@ -388,11 +388,11 @@ int main(void) {
 
                 printf("Insira o nome do primeiro funcionario (limite inferior): ");
                 fgets(inf.nome, sizeof(inf.nome), stdin);
-                inf.nome[strcspn(inf.nome, "\n")] = '\0'; // Remove o \n
+                inf.nome[strcspn(inf.nome, "\r\n")] = '\0'; // Remove o \n (e o \r quando necessário)
 
                 printf("Insira o nome do segundo funcionario (limite superior): ");
                 fgets(sup.nome, sizeof(sup.nome), stdin);
-                sup.nome[strcspn(sup.nome, "\n")] = '\0'; // Remove o \n
+                sup.nome[strcspn(sup.nome, "\r\n")] = '\0'; // Remove o \n (e o \r quando necessário)
 
                 //Inserção de data qualquer para iniciar a comparação
                 inf.dataNascimento.dia = 31;

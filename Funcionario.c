@@ -177,7 +177,7 @@ dadoBusca criaDadoBusca() {
     
     printf("Nome: ");
     fgets(novo.nome, sizeof(novo.nome), stdin);
-    novo.nome[strcspn(novo.nome, "\n")] = '\0';
+    novo.nome[strcspn(novo.nome, "\r\n")] = '\0';
 
     Data dataNascimento;
     printf("Data de Nascimento no formato (DD/MM/AAAA): ");
@@ -202,17 +202,17 @@ Funcionario criaFuncionario(char nome[100], Data dataNascimento) {
 
     printf("Nome do pai: ");
     fgets(novo.nomePai, sizeof(novo.nomePai), stdin);
-    novo.nomePai[strcspn(novo.nomePai, "\n")] = '\0';
+    novo.nomePai[strcspn(novo.nomePai, "\r\n")] = '\0';
     
     printf("Nome da mae: ");
     fgets(novo.nomeMae, sizeof(novo.nomeMae), stdin);
-    novo.nomeMae[strcspn(novo.nomeMae, "\n")] = '\0';
+    novo.nomeMae[strcspn(novo.nomeMae, "\r\n")] = '\0';
 
     Endereco residencia;
     memset(&residencia, 0, sizeof(Endereco));
     printf("Rua da residencia: ");
     fgets(residencia.rua, sizeof(residencia.rua), stdin);
-    residencia.rua[strcspn(residencia.rua, "\n")] = '\0';
+    residencia.rua[strcspn(residencia.rua, "\r\n")] = '\0';
     
     printf("Numero da residencia: ");
     scanf("%d", &residencia.numero);
@@ -227,13 +227,13 @@ Funcionario criaFuncionario(char nome[100], Data dataNascimento) {
 
     printf("Bairro da residencia: ");
     fgets(residencia.bairro, sizeof(residencia.bairro), stdin);
-    residencia.bairro[strcspn(residencia.bairro, "\n")] = '\0';
+    residencia.bairro[strcspn(residencia.bairro, "\r\n")] = '\0';
 
     novo.residencia = residencia;
 
     printf("Telefone (11 algarismos, sem simbolos): ");
     fgets(novo.telefone, sizeof(novo.telefone), stdin);
-    novo.telefone[strcspn(novo.telefone, "\n")] = '\0';
+    novo.telefone[strcspn(novo.telefone, "\r\n")] = '\0';
 
     Data dataContratacao;
     printf("Data de Contratacao no formato (DD/MM/AAAA): ");
