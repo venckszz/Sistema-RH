@@ -43,11 +43,9 @@ void verificaData(Data* data) {
         } else if (data->mes == 2) {
             
             // Verifica se o ano e bissexto
-            if ((data->ano % 4 == 0 && data->ano % 100 != 0) || data->ano % 400 == 0) {
-                diasNoMes = 29;
-            } else {
-                diasNoMes = 28;
-            }
+            if ((data->ano % 4 == 0 && data->ano % 100 != 0) || data->ano % 400 == 0) diasNoMes = 29;
+            
+            else diasNoMes = 28;
         }
 
         if (data->dia < 1 || data->dia > diasNoMes) {
@@ -59,9 +57,9 @@ void verificaData(Data* data) {
             // Como o dia mudou, reiniciamos o laço para garantir que a data é valida
             dataValida = false;
 
-        } else {
-            dataValida = true;
-        }
+        } 
+        
+        else dataValida = true;
     }
 }
 
@@ -84,11 +82,9 @@ bool ehMenorDadoBusca(void* dado1, void* dado2) {
 
     int comparacao = strcmp(dado1_busca->nome, dado2_busca->nome);
 
-    if (comparacao < 0)
-        return true;
+    if (comparacao < 0) return true;
 
-    if (comparacao > 0)
-        return false;
+    if (comparacao > 0) return false;
 
     // desempata pela data de nascimento
     return dataEhMenor(dado1_busca->dataNascimento, dado2_busca->dataNascimento);
@@ -135,8 +131,7 @@ void imprimeDadosFuncionario(void *dado) {
     printf("Data de Contratacao: %02d/%02d/%04d\n", f->contratacao.dia, f->contratacao.mes, f->contratacao.ano);
     
     // Imprime a data de desligamento somente se o funcionário tiver sido desligado
-    if (!f->atividade) printf("Data de Desligamento: %02d/%02d/%04d\n", 
-        f->desligamento.dia, f->desligamento.mes, f->desligamento.ano);
+    if (!f->atividade) printf("Data de Desligamento: %02d/%02d/%04d\n", f->desligamento.dia, f->desligamento.mes, f->desligamento.ano);
     
     else printf("Data de Desligamento: N/A (Contrato Ativo)\n\n");
     
