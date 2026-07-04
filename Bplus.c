@@ -16,7 +16,7 @@
 #define MAX_ALTURA 20
 #define MIN_CHAVES (ORDEM / 2)
 
-void abreBplus(FILE* arquivo, size_t tamanho_dado) {
+void inicializaBplus(FILE* arquivo, size_t tamanho_dado) {
     verificaArquivo(arquivo);
     
     Bplus cabecalho;

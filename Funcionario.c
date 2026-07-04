@@ -143,6 +143,7 @@ void imprimeDadosFuncionario(void *dado) {
     printf("\nHistorico de pagamentos:\n");
 
     if (f->qtdPagamentos == 0) printf("Nenhum pagamento cadastrado.\n");
+    
     else {
         for (int i = 0; i < f->qtdPagamentos; i++) {
             printf("%dº pagamento mais recente: R$ %.2lf\n", 
