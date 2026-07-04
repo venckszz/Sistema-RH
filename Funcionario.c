@@ -96,9 +96,7 @@ bool ehMenorDadoBusca(void* dado1, void* dado2) {
 
 void escreveDadoBusca(void *dado, FILE *arquivo) {
     dadoBusca *d = (dadoBusca*)dado;
-    // Atenção: como dadoBusca tem char*, gravar o ponteiro direto é erro!
-    // Grave o conteúdo do nome (fixo) e depois a data.
-    fwrite(d->nome, sizeof(char), 100, arquivo); // Exemplo assumindo nome[100]
+    fwrite(d->nome, sizeof(char), 100, arquivo);
     fwrite(&d->dataNascimento, sizeof(Data), 1, arquivo);
     fflush(arquivo);
 }
@@ -111,10 +109,10 @@ void leituraDadoBusca(void *dado, FILE *arquivo) {
 
 void imprimeDadosFuncionario(void *dado) {
     if (dado == NULL) {
-        printf("\nERRO: Registro de funcionário vazio ou inexistente!\n");
+        printf("\nERRO: Registro de funcionario vazio ou inexistente!\n");
         return;
     }
-    // Convertendo o ponteiro genérico para a estrutura completa do Funcionário
+
     Funcionario *f = (Funcionario*)dado;
 
     printf("\n========================================================\n");
@@ -127,17 +125,18 @@ void imprimeDadosFuncionario(void *dado) {
     printf("Nome: %s\n", f->nome);
     printf("Data de Nascimento: %02d/%02d/%04d\n", f->nascimento.dia, f->nascimento.mes, f->nascimento.ano);
     printf("Telefone: %s\n\n", f->telefone);
-    printf("Filiação:\n");
-    printf("Mãe: %s\n", f->nomeMae);
+    printf("Filiacao:\n");
+    printf("Mae: %s\n", f->nomeMae);
     printf("pai: %s\n\n", f->nomePai);
     printf("Endereço Residencial:\n");
     printf("Rua: %s, Nº: %d\n", f->residencia.rua, f->residencia.numero);
     printf("Bairro: %s\n\n", f->residencia.bairro);
-    printf("Informações Contratuais:\n");
-    printf("Data de Contratação: %02d/%02d/%04d\n", f->contratacao.dia, f->contratacao.mes, f->contratacao.ano);
+    printf("Informacoes Contratuais:\n");
+    printf("Data de Contratacao: %02d/%02d/%04d\n", f->contratacao.dia, f->contratacao.mes, f->contratacao.ano);
     
-    // Só imprime a data de desligamento se o funcionário realmente tiver sido desligado
-    if (!f->atividade) printf("Data de Desligamento: %02d/%02d/%04d\n", f->desligamento.dia, f->desligamento.mes, f->desligamento.ano);
+    // Imprime a data de desligamento somente se o funcionário tiver sido desligado
+    if (!f->atividade) printf("Data de Desligamento: %02d/%02d/%04d\n", 
+        f->desligamento.dia, f->desligamento.mes, f->desligamento.ano);
     
     else printf("Data de Desligamento: N/A (Contrato Ativo)\n\n");
     
@@ -146,7 +145,8 @@ void imprimeDadosFuncionario(void *dado) {
     if (f->qtdPagamentos == 0) printf("Nenhum pagamento cadastrado.\n");
     else {
         for (int i = 0; i < f->qtdPagamentos; i++) {
-            printf("%dº pagamento mais recente: R$ %.2lf\n", i + 1, f->historicoPagamentos[i]);
+            printf("%dº pagamento mais recente: R$ %.2lf\n", 
+                i + 1, f->historicoPagamentos[i]);
         }
     }
     printf("========================================================\n");

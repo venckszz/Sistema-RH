@@ -295,33 +295,40 @@ int main(void) {
                     break;
                 }
 
-                printf("\nFuncionarios encontrados:\n");
-                for (int i = 0; i < qtdEncontrados; i++) {
-                    printf("[%d] ", i + 1);
-                    imprimeChaveDadoBusca(&chavesEncontradas[i]);
-                    printf("\n");
-                }
+                int escolhido = 0;
 
-                printf("\nDigite a data de nascimento do funcionario que deseja remover (DD/MM/AAAA): ");
-                scanf("%d/%d/%d", &consulta.dataNascimento.dia, &consulta.dataNascimento.mes, &consulta.dataNascimento.ano);
-                limpaBuffer();
-                verificaData(&consulta.dataNascimento);
+                if (qtdEncontrados == 1) consulta.dataNascimento = chavesEncontradas[0].dataNascimento;
+                
+                else {
+                    printf("\nForam encontrados %d funcionarios com o nome '%s':\n", qtdEncontrados, consulta.nome);
 
-                int escolhido = -1;
+                    for (int i = 0; i < qtdEncontrados; i++) {
+                        printf("[%d] ", i + 1);
+                        imprimeChaveDadoBusca(&chavesEncontradas[i]);
+                        printf("\n");
+                    }
 
-                for (int i = 0; i < qtdEncontrados; i++) {
-                    if (strcmp(chavesEncontradas[i].nome, consulta.nome) == 0 &&
-                        chavesEncontradas[i].dataNascimento.dia == consulta.dataNascimento.dia &&
-                        chavesEncontradas[i].dataNascimento.mes == consulta.dataNascimento.mes &&
-                        chavesEncontradas[i].dataNascimento.ano == consulta.dataNascimento.ano) {
-                        escolhido = i;
+                    printf("\nDigite a data de nascimento do funcionario que deseja remover (DD/MM/AAAA): ");
+                    scanf("%d/%d/%d", &consulta.dataNascimento.dia, &consulta.dataNascimento.mes, &consulta.dataNascimento.ano);
+                    limpaBuffer();
+                    verificaData(&consulta.dataNascimento);
+
+                    escolhido = -1;
+
+                    for (int i = 0; i < qtdEncontrados; i++) {
+                        if (strcmp(chavesEncontradas[i].nome, consulta.nome) == 0 &&
+                            chavesEncontradas[i].dataNascimento.dia == consulta.dataNascimento.dia &&
+                            chavesEncontradas[i].dataNascimento.mes == consulta.dataNascimento.mes &&
+                            chavesEncontradas[i].dataNascimento.ano == consulta.dataNascimento.ano) {
+                            escolhido = i;
+                            break;
+                        }
+                    }
+
+                    if (escolhido == -1) {
+                        printf("\nNenhum funcionario com essa data foi encontrado.\n");
                         break;
                     }
-                }
-
-                if (escolhido == -1) {
-                    printf("\nNenhum funcionario com essa data foi encontrado.\n");
-                    break;
                 }
 
                 Funcionario f;
