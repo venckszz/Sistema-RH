@@ -160,16 +160,14 @@ void imprimePrimeiroNomeDataFuncionario(void* dado) {
     
     // Extrai apenas a primeira palavra da string 'nome'
     sscanf(funcionario->nome, "%s", primeiroNome); 
-    printf("%s (%02d/%02d/%04d)", primeiroNome, funcionario->dataNascimento.dia, 
-            funcionario->dataNascimento.mes, funcionario->dataNascimento.ano);
+    printf("%s (%02d/%02d/%04d)", primeiroNome, funcionario->dataNascimento.dia, funcionario->dataNascimento.mes, funcionario->dataNascimento.ano);
 }
 
 void imprimeChaveDadoBusca(void *dado) {
     if (dado == NULL) return;
 
     dadoBusca* d = (dadoBusca*)dado;
-    printf("%s (%02d/%02d/%d)", d->nome, d->dataNascimento.dia, 
-            d->dataNascimento.mes, d->dataNascimento.ano);
+    printf("%s (%02d/%02d/%d)", d->nome, d->dataNascimento.dia, d->dataNascimento.mes, d->dataNascimento.ano);
 }
 
 dadoBusca criaDadoBusca() {
