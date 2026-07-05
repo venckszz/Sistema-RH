@@ -143,11 +143,19 @@ int main(void) {
                 
                 Pagina* paginaAtual = buscaDadoBplus(arvore, cabecalhoBplus, &consulta, &indiceBusca, &encontrou, ehMenorDadoBusca, leituraDadoBusca);
 
-                // Vetores para armazenar temporariamente os homónimos encontrados nas folhas
-                int posicoesEncontradas[50];
-                dadoBusca chavesEncontradas[50];
+                // Vetores para armazenar temporariamente os homônimos encontrados nas folhas
+                int capacidadeEncontrados = cabecalhoFuncionarios->qtd_registros;
+
+                if (capacidadeEncontrados <= 0) {
+                    printf("\nNao ha funcionarios cadastrados no sistema.\n");
+                    break;
+                }
+
+                int* posicoesEncontradas = mallocSafe(capacidadeEncontrados * sizeof(int));
+                dadoBusca* chavesEncontradas = mallocSafe(capacidadeEncontrados * sizeof(dadoBusca));
+
                 int qtdEncontrados = 0;
-                
+                                
                 // Percorre as chaves através da lista ordenada encadeada entre as folhas
                 while (paginaAtual != NULL) {
                     for (int i = indiceBusca; i < paginaAtual->qtd_chaves_atuais; i++) {
@@ -155,10 +163,18 @@ int main(void) {
                         
                         // Verifica se o nome corresponde ao buscado
                         if (strcmp(chaveAtual->nome, consulta.nome) == 0) {
+                            if (qtdEncontrados >= capacidadeEncontrados) {
+                                printf("\nErro interno: capacidade de armazenamento de resultados excedida.\n");
+                                liberaPaginaRAM(paginaAtual);
+                                paginaAtual = NULL;
+                                break;
+                            }
+
                             posicoesEncontradas[qtdEncontrados] = paginaAtual->posRegistro[i];
                             chavesEncontradas[qtdEncontrados] = *chaveAtual;
                             qtdEncontrados++;
-                        } else {
+                        }
+                        else {
                             // Como a árvore é ordenada, se o nome mudou, não há mais homónimos à frente
                             liberaPaginaRAM(paginaAtual);
                             paginaAtual = NULL;
@@ -174,15 +190,17 @@ int main(void) {
                         if (prox != -1) {
                             paginaAtual = leituraPagina(arvore, cabecalhoBplus, prox, leituraDadoBusca);
                             indiceBusca = 0; // Na nova folha, começamos a ler desde o índice 0
-                        } else {
-                            paginaAtual = NULL;
-                        }
+                        } 
+                        
+                        else paginaAtual = NULL;
                     }
                 }
                 
                 // Tratamento dos resultados da pesquisa
                 if (qtdEncontrados == 0) {
                     printf("\nFuncionario '%s' nao encontrado no sistema!\n", consulta.nome);
+                    free(posicoesEncontradas);
+                    free(chavesEncontradas);
                     break;
                 }
                 
@@ -218,6 +236,8 @@ int main(void) {
 
                     if (escolha == -1) {
                         printf("\nNenhum funcionario com essa data foi encontrado.\n");
+                        free(posicoesEncontradas);
+                        free(chavesEncontradas);
                         break;
                     }
                 }
@@ -231,7 +251,9 @@ int main(void) {
                 
                 // Exibe a ficha cadastral completa
                 imprimeDadosFuncionario(&ficha);
-                
+
+                free(posicoesEncontradas);
+                free(chavesEncontradas);
                 break;
             }
 
@@ -254,8 +276,16 @@ int main(void) {
 
                 Pagina* paginaAtual = buscaDadoBplus(arvore, cabecalhoBplus, &consulta, &indiceBusca, &encontrou, ehMenorDadoBusca, leituraDadoBusca);
 
-                int posicoesEncontradas[50];
-                dadoBusca chavesEncontradas[50];
+                int capacidadeEncontrados = cabecalhoFuncionarios->qtd_registros;
+
+                if (capacidadeEncontrados <= 0) {
+                    printf("\nNao ha funcionarios cadastrados no sistema.\n");
+                    break;
+                }
+
+                int* posicoesEncontradas = mallocSafe(capacidadeEncontrados * sizeof(int));
+                dadoBusca* chavesEncontradas = mallocSafe(capacidadeEncontrados * sizeof(dadoBusca));
+
                 int qtdEncontrados = 0;
 
                 while (paginaAtual != NULL) {
@@ -265,10 +295,16 @@ int main(void) {
                         dadoBusca* chaveAtual = (dadoBusca*)paginaAtual->chaves[i];
 
                         if (strcmp(chaveAtual->nome, consulta.nome) == 0) {
+                            if (qtdEncontrados >= capacidadeEncontrados) {
+                                printf("\nErro interno: capacidade de armazenamento de resultados excedida.\n");
+                                parar = true;
+                                break;
+                            }
+
                             posicoesEncontradas[qtdEncontrados] = paginaAtual->posRegistro[i];
                             chavesEncontradas[qtdEncontrados] = *chaveAtual;
                             qtdEncontrados++;
-                        } 
+                        }
                         
                         else {
                             parar = true;
@@ -289,6 +325,8 @@ int main(void) {
 
                 if (qtdEncontrados == 0) {
                     printf("\nNenhum funcionario encontrado com esse nome.\n");
+                    free(posicoesEncontradas);
+                    free(chavesEncontradas);
                     break;
                 }
 
@@ -324,6 +362,8 @@ int main(void) {
 
                     if (escolhido == -1) {
                         printf("\nNenhum funcionario com essa data foi encontrado.\n");
+                        free(posicoesEncontradas);
+                        free(chavesEncontradas);
                         break;
                     }
                 }
@@ -334,7 +374,14 @@ int main(void) {
                 fread(&f, sizeof(Funcionario), 1, funcionarios);
 
                 printf("\nDados do funcionario selecionado:\n");
-                imprimeDadosFuncionario(&f);
+                printf("Nome: %s\n", f.nome);
+                printf("Nascimento: %02d/%02d/%04d\n", f.nascimento.dia, f.nascimento.mes, f.nascimento.ano);
+                printf("Nome do pai: %s\n", f.nomePai);
+                printf("Nome da mae: %s\n", f.nomeMae);
+                printf("Telefone: %s\n", f.telefone);
+                printf("Endereco: %s, %d - %s\n", f.residencia.rua, f.residencia.numero, f.residencia.bairro);
+                printf("Contratacao: %02d/%02d/%04d\n", f.contratacao.dia, f.contratacao.mes, f.contratacao.ano);
+                printf("Status: %s\n", f.atividade ? "Ativo" : "Inativo");
 
                 int confirma;
                 printf("\nConfirmar exclusao? [1 - Sim | 0 - Nao]: ");
@@ -343,6 +390,8 @@ int main(void) {
 
                 if (confirma != 1) {
                     printf("\nExclusao cancelada.\n");
+                    free(posicoesEncontradas);
+                    free(chavesEncontradas);
                     break;
                 }
 
@@ -365,7 +414,11 @@ int main(void) {
                     printf("\nFuncionario removido com sucesso.\n");
                 } 
 
-                else printf("\nErro ao remover funcionario da arvore.\n");
+                else 
+                printf("\nErro ao remover funcionario da arvore.\n");
+
+                free(posicoesEncontradas);
+                free(chavesEncontradas);
 
                 break;
             }

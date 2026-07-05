@@ -71,10 +71,10 @@ typedef struct registros {
 void verificaData(Data* data);
 
 /**
- * @brief Função responsável por compara duas datas.
+ * @brief Função responsável por comparar duas datas.
  * @param dataA Primeira data fornecida para a comparação.
  * @param dataB Segunda data fornecida para a comparação.
- * @return bool 'true' se a primeira data (dataA) fornecida é anterior à segunda (dataB), caso contrário 'false'.
+ * @return bool 'True' se a primeira data (dataA) fornecida é anterior à segunda (dataB), caso contrário 'false'.
  */
 bool dataEhMenor(Data dataA, Data dataB);
 
@@ -83,7 +83,7 @@ bool dataEhMenor(Data dataA, Data dataB);
  * @details A função analisa o nome e data de nascimento do funcionario. Primeiramente, uma comparação por nome é feita e, caso os nomes sejam iguais, uma comparação por data é realizada.
  * @param dado1 Ponteiro genérico para o primeiro dado fornecido para a comparação.
  * @param dado2 Ponteiro genérico para o segundo dado fornecido para a comparação.
- * @return bool 'true' se o primeiro dado fornecido é menor que a segundo e 'false' caso seja maior.
+ * @return bool 'True' se o primeiro dado fornecido é menor que o segundo e 'false' caso seja maior.
  */
 bool ehMenorDadoBusca(void* dado1, void* dado2);
 
@@ -105,7 +105,7 @@ void leituraDadoBusca(void *dado, FILE *arquivo);
 
 /**
  * @brief Função callback responsável por imprimir a ficha cadastral completa de dados do funcionário
- * @param dado Ponteiro genérico para os dados do funcionário que serão impresso.
+ * @param dado Ponteiro genérico para os dados do funcionário que serão impressos.
  */
 void imprimeDadosFuncionario(void* dado);
 

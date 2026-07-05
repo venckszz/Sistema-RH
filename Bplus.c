@@ -40,7 +40,6 @@ void fechaBplus(FILE* arquivo, Bplus* cabecalho) {
 
 Bplus* leituraCabecalhoBplus(FILE* arquivo) {
     verificaArquivo(arquivo);
-    
     rewind(arquivo);
     
     // Aloca o cabeçalho do arquivo na memória RAM
@@ -49,7 +48,6 @@ Bplus* leituraCabecalhoBplus(FILE* arquivo) {
         free(cabecalho);
         return NULL;
     }
-    
     return cabecalho;
 }
 
@@ -123,7 +121,8 @@ void liberaPaginaRAM(Pagina *p) {
     free(p);
 }
 
-void liberaLogicamentePagina(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, void (*escreveDado)(void*, FILE*)) {
+void liberaLogicamentePagina(FILE* arquivo, Bplus* cabecalho, 
+    Pagina* pagina, void (*escreveDado)(void*, FILE*)) {
     verificaArquivo(arquivo);
 
     if (cabecalho == NULL || pagina == NULL) return;
@@ -192,7 +191,10 @@ Pagina* leituraPagina(FILE* arquivo, Bplus* cabecalho, int posPagina, void (*lei
 }
 
 //Retorna una página, além de que a variável 'posBusca' terminará com a posição final da busca e 'encontrou' indicará se foi encontrado ou não:
-Pagina* buscaDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoBuscado, int* indiceBusca, bool* encontrou, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*)) {
+Pagina* buscaDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoBuscado, 
+    int* indiceBusca, bool* encontrou, bool (*ehMenor)(void*, void*), 
+    void (*leituraDado)(void*, FILE*)) {
+    
     *indiceBusca = -1;
     *encontrou = false;
 
@@ -211,9 +213,10 @@ Pagina* buscaDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoBuscado, int* 
     while (!paginaAtual->ehFolha) {
         i = 0;
         
-        // Se a chave K_i é menor que o X (dado buscado), devemos olhar mais para a direita.
-        // O laço para assim que encontrar um K_i >= X, o que significa que o filho correto é o P_i.
-        while (i < paginaAtual->qtd_chaves_atuais && !ehMenor(dadoBuscado, paginaAtual->chaves[i])) {
+        // Percorre para a direita para tentar encontrar a chave 
+        while (i < paginaAtual->qtd_chaves_atuais && 
+        !ehMenor(dadoBuscado, paginaAtual->chaves[i])) {
+            
             i++;
         }
         
@@ -234,7 +237,9 @@ Pagina* buscaDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoBuscado, int* 
     i = 0;
     
     // O laço para de avançar assim que achar um elemento que não é menor que o dado buscado.
-    while (i < paginaAtual->qtd_chaves_atuais && ehMenor(paginaAtual->chaves[i], dadoBuscado)) {
+    while (i < paginaAtual->qtd_chaves_atuais && 
+    ehMenor(paginaAtual->chaves[i], dadoBuscado)) {
+        
         i++;
     }
     
@@ -243,18 +248,21 @@ Pagina* buscaDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoBuscado, int* 
     // Verifica se o elemento nessa posição é uma correspondência exata
     if (i < paginaAtual->qtd_chaves_atuais) {
         
-        // Se X não é menor que K, e K não é menor que X, então X == K.
-        // Utiliza ehMenor para aproveitar código
-        if (!ehMenor(dadoBuscado, paginaAtual->chaves[i]) && !ehMenor(paginaAtual->chaves[i], dadoBuscado)) {
-            *encontrou = true;
+        // Verifica se o dado é igual a chave 
+        if (!ehMenor(dadoBuscado, paginaAtual->chaves[i]) && 
+            !ehMenor(paginaAtual->chaves[i], dadoBuscado)) {
+            
+                *encontrou = true;
         }
     }
 
     return paginaAtual;
 }
 
-int insereBplus(FILE* arquivo, Bplus* cabecalho, void* novo_dado, int posRegistro, bool (*ehMenor)(void*, void*), void (*escreveDado)(void*, FILE*), void (*leituraDado)(void*, FILE*)) {
-    verificaArquivo(arquivo);
+int insereBplus(FILE* arquivo, Bplus* cabecalho, void* novo_dado, int posRegistro, 
+    bool (*ehMenor)(void*, void*), void (*escreveDado)(void*, FILE*), void (*leituraDado)(void*, FILE*)) {
+    
+        verificaArquivo(arquivo);
 
     if (cabecalho == NULL) return -1;
 
@@ -278,8 +286,6 @@ int insereBplus(FILE* arquivo, Bplus* cabecalho, void* novo_dado, int posRegistr
     
     Pagina* paginaAtual = leituraPagina(arquivo, cabecalho, raiz, leituraDado);
 
-    // Guarda, antes de cada descida, a posição do nó de origem
-    // Definimos o valor 20 pois o vetor está associado à altura da árvore, sendo muito difícil atingir o valor max.
     int posicoes_pais[MAX_ALTURA];
 
     // Guarda, antes de cada descida, o caminho escolhido para descer (indice do vetor de filhos)
@@ -316,7 +322,9 @@ int insereBplus(FILE* arquivo, Bplus* cabecalho, void* novo_dado, int posRegistr
         i++;
     }
 
-    if (i < paginaAtual->qtd_chaves_atuais && !ehMenor(novo_dado, paginaAtual->chaves[i]) && !ehMenor(paginaAtual->chaves[i], novo_dado)) {
+    if (i < paginaAtual->qtd_chaves_atuais && !ehMenor(novo_dado, paginaAtual->chaves[i]) 
+        && !ehMenor(paginaAtual->chaves[i], novo_dado)) {
+
         liberaPaginaRAM(paginaAtual);
         return 42; //Retorno específico para o caso dos dois iguais
     }
@@ -451,7 +459,9 @@ int insereBplus(FILE* arquivo, Bplus* cabecalho, void* novo_dado, int posRegistr
     return 0;
 }
 
-void insereNaFolha(Pagina* pagina, Bplus* cabecalho, void* novo_dado, int indiceDado, bool (*ehMenor)(void*, void*)) {
+void insereNaFolha(Pagina* pagina, Bplus* cabecalho, void* novo_dado, 
+    int indiceDado, bool (*ehMenor)(void*, void*)) {
+    
     if (pagina == NULL) return;
 
     int i = 0;
@@ -482,9 +492,10 @@ Pagina* splitFolha(Pagina* pagina, Bplus* cabecalho) {
 
     // Envia para a nova folha os 3 registros sobressalentes
     for (int i = indiceDivisao; i < pagina->qtd_chaves_atuais; i++) {
-
-        memcpy(nova->chaves[nova->qtd_chaves_atuais], pagina->chaves[i], cabecalho->tamanho_registro);
-        nova->posRegistro[nova->qtd_chaves_atuais] = pagina->posRegistro[i];
+        memcpy(nova->chaves[nova->qtd_chaves_atuais], pagina->chaves[i], 
+               cabecalho->tamanho_registro);
+        
+            nova->posRegistro[nova->qtd_chaves_atuais] = pagina->posRegistro[i];
         nova->qtd_chaves_atuais++;
 
         pagina->posRegistro[i] = -1;
@@ -540,8 +551,10 @@ Pagina* splitInterno(Pagina* pagina, Bplus* cabecalho) {
     return nova;
 }
 
-int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*)) {
-    verificaArquivo(arquivo);
+int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, 
+    bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*)) {
+    
+        verificaArquivo(arquivo);
 
     if (cabecalho == NULL || cabecalho->raiz == -1) return - 1;
     
@@ -580,7 +593,8 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, bool (*e
         i++;
     }
     
-    bool encontrou = (i < pagina->qtd_chaves_atuais) && !ehMenor(dadoRemover, pagina->chaves[i]) && !ehMenor(pagina->chaves[i], dadoRemover);
+    bool encontrou = (i < pagina->qtd_chaves_atuais) && !ehMenor(dadoRemover, pagina->chaves[i]) 
+                      && !ehMenor(pagina->chaves[i], dadoRemover);
     
     if (!encontrou) {
         liberaPaginaRAM(pagina);
@@ -884,7 +898,9 @@ void imprimeArvoreBplus(FILE* arquivo, Bplus* cabecalho, int posAtual, int profu
     liberaPaginaRAM(p);
 }
 
-int buscaIntervaloBplus(FILE* arquivo, Bplus* cabecalho, void* limite_inferior, void* limite_superior, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), int posRegistros[], int capacidade) {
+int buscaIntervaloBplus(FILE* arquivo, Bplus* cabecalho, void* limite_inferior, void* limite_superior, 
+    bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), int posRegistros[], int capacidade) {
+    
     int indiceBusca = 0;
     int qtdEncontrados = 0;
     bool encontrou = false;
@@ -895,7 +911,8 @@ int buscaIntervaloBplus(FILE* arquivo, Bplus* cabecalho, void* limite_inferior, 
         return 0;
     }
 
-    Pagina* paginaAtual = buscaDadoBplus(arquivo, cabecalho, limite_inferior, &indiceBusca, &encontrou, ehMenor, leituraDado);
+    Pagina* paginaAtual = buscaDadoBplus(arquivo, cabecalho, limite_inferior, 
+                          &indiceBusca, &encontrou, ehMenor, leituraDado);
     
     while (paginaAtual != NULL) {
         for (int i = indiceBusca; i < paginaAtual->qtd_chaves_atuais; i++) {
@@ -907,14 +924,14 @@ int buscaIntervaloBplus(FILE* arquivo, Bplus* cabecalho, void* limite_inferior, 
             }
 
             // Enquanto chaveAtual < limite_inferior, apenas ignora
-            if (ehMenor(paginaAtual->chaves[i], limite_inferior)) {
-                continue;
-            }
+            if (ehMenor(paginaAtual->chaves[i], limite_inferior)) continue;
+    
 
             if (qtdEncontrados < capacidade) {
                 posRegistros[qtdEncontrados] = paginaAtual->posRegistro[i];
                 qtdEncontrados++;
             }
+
             else {
                 liberaPaginaRAM(paginaAtual);
                 return qtdEncontrados;
