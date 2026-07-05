@@ -786,9 +786,7 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover,
             tioDir = NULL;
         }
 
-        if (pai != NULL) {
-            liberaPaginaRAM(pai);
-        }
+        if (pai != NULL) liberaPaginaRAM(pai);
 
         pai = avo;
         aux--;
@@ -828,8 +826,7 @@ void concatenaBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pai, int indiceFilh
 
     irmaoEsq->qtd_chaves_atuais += irmaoDir->qtd_chaves_atuais;
 
-    if (irmaoDir->ehFolha && irmaoEsq->ehFolha)
-        irmaoEsq->posProximo = irmaoDir->posProximo;
+    if (irmaoDir->ehFolha && irmaoEsq->ehFolha) irmaoEsq->posProximo = irmaoDir->posProximo;
     
     for (int i = indiceFilhoEsq; i < pai->qtd_chaves_atuais - 1; i++) {
         memcpy(pai->chaves[i], pai->chaves[i + 1], cabecalho->tamanho_registro);
@@ -959,19 +956,17 @@ bool redistribui(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, int posPai, in
         return true;
     }
 
-    if (irmaoEsq != NULL) {
-        liberaPaginaRAM(irmaoEsq);
-    }
+    if (irmaoEsq != NULL) liberaPaginaRAM(irmaoEsq);
 
-    if (irmaoDir != NULL) {
-        liberaPaginaRAM(irmaoDir);
-    }
+    if (irmaoDir != NULL) liberaPaginaRAM(irmaoDir);
 
     liberaPaginaRAM(pai);
     return false;
 }
 
-void imprimeArvoreBplus(FILE* arquivo, Bplus* cabecalho, int posAtual, int profundidade, void (*imprimeChave)(void*), void (*leituraDado)(void*, FILE*)) {
+void imprimeArvoreBplus(FILE* arquivo, Bplus* cabecalho, int posAtual, int profundidade, 
+                        void (*imprimeChave)(void*), void (*leituraDado)(void*, FILE*)) {
+    
     if (posAtual == -1) return;
 
     Pagina *p = leituraPagina(arquivo, cabecalho, posAtual, leituraDado);
@@ -980,21 +975,15 @@ void imprimeArvoreBplus(FILE* arquivo, Bplus* cabecalho, int posAtual, int profu
         printf("        ");
     }
 
-    if (cabecalho->raiz == posAtual)
-        printf("[RAIZ | posicao: %d] ", p->posPagina);
+    if (cabecalho->raiz == posAtual) printf("[RAIZ | posicao: %d] ", p->posPagina);
 
-    else
+    if (p->ehFolha) printf("[FOLHA | posicao: %d] ", p->posPagina);
 
-    if (p->ehFolha) 
-        printf("[FOLHA | posicao: %d] ", p->posPagina);
-
-    else
-        printf("[INTERNO | posicao: %d] ", p->posPagina);
+    else printf("[INTERNO | posicao: %d] ", p->posPagina);
 
     for (int i = 0; i < p->qtd_chaves_atuais; i++) {
         imprimeChave(p->chaves[i]);
-        if (i < p->qtd_chaves_atuais - 1)
-            printf(" | ");
+        if (i < p->qtd_chaves_atuais - 1) printf(" | ");
     }
 
     printf("\n");
