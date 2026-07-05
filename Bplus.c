@@ -884,38 +884,54 @@ void imprimeArvoreBplus(FILE* arquivo, Bplus* cabecalho, int posAtual, int profu
     liberaPaginaRAM(p);
 }
 
-void buscaIntervaloBplus(FILE* arquivo, Bplus* cabecalho, void* limite_inferior, void* limite_superior, bool (*ehMenor)(void*, void*), void (*imprimeChave)(void*), void (*leituraDado)(void*, FILE*)) {
+int buscaIntervaloBplus(FILE* arquivo, Bplus* cabecalho, void* limite_inferior, void* limite_superior, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), int posRegistros[], int capacidade) {
     int indiceBusca = 0;
+    int qtdEncontrados = 0;
     bool encontrou = false;
 
     verificaArquivo(arquivo);
-    if (cabecalho == NULL || cabecalho->raiz == -1) return;
+
+    if (cabecalho == NULL || cabecalho->raiz == -1 || posRegistros == NULL || capacidade <= 0) {
+        return 0;
+    }
 
     Pagina* paginaAtual = buscaDadoBplus(arquivo, cabecalho, limite_inferior, &indiceBusca, &encontrou, ehMenor, leituraDado);
     
     while (paginaAtual != NULL) {
         for (int i = indiceBusca; i < paginaAtual->qtd_chaves_atuais; i++) {
-            if (!ehMenor(paginaAtual->chaves[i], limite_superior)) {
+
+            // Intervalo fechado: para somente quando chaveAtual > limite_superior
+            if (ehMenor(limite_superior, paginaAtual->chaves[i])) {
                 liberaPaginaRAM(paginaAtual);
-                return;
+                return qtdEncontrados;
             }
-            
-            if (ehMenor(limite_inferior, paginaAtual->chaves[i])) {
-                imprimeChave(paginaAtual->chaves[i]);
-                printf("\n");
+
+            // Enquanto chaveAtual < limite_inferior, apenas ignora
+            if (ehMenor(paginaAtual->chaves[i], limite_inferior)) {
+                continue;
+            }
+
+            if (qtdEncontrados < capacidade) {
+                posRegistros[qtdEncontrados] = paginaAtual->posRegistro[i];
+                qtdEncontrados++;
+            }
+            else {
+                liberaPaginaRAM(paginaAtual);
+                return qtdEncontrados;
             }
         }
         
         if (paginaAtual->posProximo == -1) {
             liberaPaginaRAM(paginaAtual);
-            return;
+            return qtdEncontrados;
         } 
 
         int posProxPagina = paginaAtual->posProximo;
         liberaPaginaRAM(paginaAtual);
 
         paginaAtual = leituraPagina(arquivo, cabecalho, posProxPagina, leituraDado);
-        
         indiceBusca = 0;
-    }  
+    }
+
+    return qtdEncontrados;
 }

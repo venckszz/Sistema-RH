@@ -10,7 +10,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "Bplus.h"
 #include "Funcionario.h"
 #include "Util.h"
 

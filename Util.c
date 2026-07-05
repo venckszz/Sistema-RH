@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
+#include "Util.h"
 #include "Bplus.h"
 
 void* mallocSafe(size_t nbytes) {

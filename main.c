@@ -113,15 +113,10 @@ int main(void) {
 
                     int resultado = insereBplus(arvore, cabecalhoBplus, &dado, novo.posRegistro, ehMenorDadoBusca, escreveDadoBusca, leituraDadoBusca);
 
-                    if (resultado == 0) {
-                        printf("\nInsercao realizada com sucesso! Retornando ao menu...\n");
-                    }
-                    else if (resultado == 42) {
-                        printf("\nErro: funcionario com mesmo nome e mesma data ja existe!\n");
-                    }
-                    else {
-                        printf("\nErro ao inserir!\n");
-                    }
+                    if (resultado == 0) printf("\nInsercao realizada com sucesso! Retornando ao menu...\n");
+                
+                    else if (resultado == 42) printf("\nErro: funcionario com mesmo nome e mesma data ja existe!\n");
+                    else printf("\nErro ao inserir!\n");
                 }
 
                 liberaPaginaRAM(paginaBuscada);
@@ -273,7 +268,9 @@ int main(void) {
                             posicoesEncontradas[qtdEncontrados] = paginaAtual->posRegistro[i];
                             chavesEncontradas[qtdEncontrados] = *chaveAtual;
                             qtdEncontrados++;
-                        } else {
+                        } 
+                        
+                        else {
                             parar = true;
                             break;
                         }
@@ -284,7 +281,9 @@ int main(void) {
 
                     if (parar || prox == -1) {
                         paginaAtual = NULL;
-                    } else {
+                    } 
+                    
+                    else {
                         paginaAtual = leituraPagina(arvore, cabecalhoBplus, prox, leituraDadoBusca);
                         indiceBusca = 0;
                     }
@@ -394,18 +393,38 @@ int main(void) {
                 fgets(sup.nome, sizeof(sup.nome), stdin);
                 sup.nome[strcspn(sup.nome, "\r\n")] = '\0'; // Remove o \n (e o \r quando necessário)
 
-                //Inserção de data qualquer para iniciar a comparação
-                inf.dataNascimento.dia = 31;
-                inf.dataNascimento.mes = 12;
-                inf.dataNascimento.ano = 9999;
+                // Como o intervalo é fechado por nome, usa-se a menor data possível no limite inferior
+                // e a maior data possível no limite superior, garantindo a inclusão de todos os homônimos.
+                inf.dataNascimento.dia = 1;
+                inf.dataNascimento.mes = 1;
+                inf.dataNascimento.ano = 1000;
 
-                sup.dataNascimento.dia = 1;
-                sup.dataNascimento.mes = 1;
-                sup.dataNascimento.ano = 1000;
+                sup.dataNascimento.dia = 31;
+                sup.dataNascimento.mes = 12;
+                sup.dataNascimento.ano = 9999;
 
                 if (strcmp(inf.nome, sup.nome) <= 0) {
-                    printf("\nFuncionarios encontrados no intervalo:\n");
-                    buscaIntervaloBplus(arvore, cabecalhoBplus, &inf, &sup, ehMenorDadoBusca, imprimePrimeiroNomeDataFuncionario, leituraDadoBusca);
+                    int posRegistros[1000];
+
+                    int qtdEncontrados = buscaIntervaloBplus(arvore,cabecalhoBplus, &inf, &sup, ehMenorDadoBusca, leituraDadoBusca, posRegistros, 1000);
+
+                    if (qtdEncontrados == 0) printf("\nNenhum funcionario encontrado no intervalo informado.\n");
+                    
+                    else {
+                        printf("\nFuncionarios encontrados no intervalo fechado:\n");
+
+                        for (int i = 0; i < qtdEncontrados; i++) {
+                            Funcionario ficha;
+                            memset(&ficha, 0, sizeof(Funcionario));
+
+                            fseek(funcionarios, sizeof(Registros) + posRegistros[i] * sizeof(Funcionario), SEEK_SET);
+
+                            if (fread(&ficha, sizeof(Funcionario), 1, funcionarios) == 1 && ficha.registroAtivo) {
+                                imprimeDadosFuncionario(&ficha);
+                                printf("\n--------------------------------------------------------\n");
+                            }
+                        }
+                    }
                 }
 
                 else printf("\nErro: O nome deve ser alfabeticamente menor ou igual ao segundo.\n");
