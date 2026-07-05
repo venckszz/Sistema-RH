@@ -767,7 +767,9 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover,
     return posRegistroNoArquivo;
 }
 
-void concatenaBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pai, int indiceFilhoEsq, Pagina* irmaoEsq, Pagina* irmaoDir, void (*escreveDado)(void*, FILE*)) {
+void concatenaBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pai, int indiceFilhoEsq, Pagina* irmaoEsq,
+    Pagina* irmaoDir, void (*escreveDado)(void*, FILE*)) {
+    
     verificaArquivo(arquivo);
 
     if (cabecalho == NULL || pai == NULL || irmaoEsq == NULL || irmaoDir == NULL) return;
@@ -780,9 +782,9 @@ void concatenaBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pai, int indiceFilh
     for (int i = 0; i < irmaoDir->qtd_chaves_atuais; i++) {
         memcpy(irmaoEsq->chaves[irmaoEsq->qtd_chaves_atuais + i], irmaoDir->chaves[i], cabecalho->tamanho_registro);
         
-        if (irmaoDir->ehFolha && irmaoEsq->ehFolha) {
+        if (irmaoDir->ehFolha && irmaoEsq->ehFolha)
             irmaoEsq->posRegistro[irmaoEsq->qtd_chaves_atuais + i] = irmaoDir->posRegistro[i];
-        }
+
         else
             irmaoEsq->posFilhos[irmaoEsq->qtd_chaves_atuais + i] = irmaoDir->posFilhos[i];
     }
@@ -799,6 +801,7 @@ void concatenaBplus(FILE* arquivo, Bplus* cabecalho, Pagina* pai, int indiceFilh
         memcpy(pai->chaves[i], pai->chaves[i + 1], cabecalho->tamanho_registro);
         pai->posFilhos[i + 1] = pai->posFilhos[i + 2];
     }
+
     pai->qtd_chaves_atuais--;
 
     liberaLogicamentePagina(arquivo, cabecalho, irmaoDir, escreveDado);
