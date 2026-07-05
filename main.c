@@ -279,9 +279,7 @@ int main(void) {
                     int prox = paginaAtual->posProximo;
                     liberaPaginaRAM(paginaAtual);
 
-                    if (parar || prox == -1) {
-                        paginaAtual = NULL;
-                    } 
+                    if (parar || prox == -1) paginaAtual = NULL;
                     
                     else {
                         paginaAtual = leituraPagina(arvore, cabecalhoBplus, prox, leituraDadoBusca);
@@ -336,14 +334,7 @@ int main(void) {
                 fread(&f, sizeof(Funcionario), 1, funcionarios);
 
                 printf("\nDados do funcionario selecionado:\n");
-                printf("Nome: %s\n", f.nome);
-                printf("Nascimento: %02d/%02d/%04d\n", f.nascimento.dia, f.nascimento.mes, f.nascimento.ano);
-                printf("Nome do pai: %s\n", f.nomePai);
-                printf("Nome da mae: %s\n", f.nomeMae);
-                printf("Telefone: %s\n", f.telefone);
-                printf("Endereco: %s, %d - %s\n", f.residencia.rua, f.residencia.numero, f.residencia.bairro);
-                printf("Contratacao: %02d/%02d/%04d\n", f.contratacao.dia, f.contratacao.mes, f.contratacao.ano);
-                printf("Status: %s\n", f.atividade ? "Ativo" : "Inativo");
+                imprimeDadosFuncionario(&f);
 
                 int confirma;
                 printf("\nConfirmar exclusao? [1 - Sim | 0 - Nao]: ");
