@@ -169,7 +169,7 @@ int main(void) {
                                 paginaAtual = NULL;
                                 break;
                             }
-
+                            
                             posicoesEncontradas[qtdEncontrados] = paginaAtual->posRegistro[i];
                             chavesEncontradas[qtdEncontrados] = *chaveAtual;
                             qtdEncontrados++;
