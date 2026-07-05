@@ -670,13 +670,20 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover,
 
     if (irmaoEsqFolha != NULL) {
         concatenaBplus(arquivo, cabecalho, pai, indiceFilho - 1, irmaoEsqFolha, pagina, escreveDado);
-        if (irmaoDirFolha) 
-            liberaPaginaRAM(irmaoDirFolha); // Limpa da RAM o que não usou
-    }   
+        liberaPaginaRAM(pagina);
+        pagina = NULL;
+
+        if (irmaoDirFolha != NULL) {
+            liberaPaginaRAM(irmaoDirFolha);
+            irmaoDirFolha = NULL;
+        }
+    }  
+
     else {
         if (irmaoDirFolha != NULL) {
             concatenaBplus(arquivo, cabecalho, pai, indiceFilho, pagina, irmaoDirFolha, escreveDado);
-            if (irmaoEsqFolha) liberaPaginaRAM(irmaoEsqFolha);
+            liberaPaginaRAM(irmaoDirFolha);
+            irmaoDirFolha = NULL;
         }
     }
 
@@ -713,6 +720,21 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover,
 
     aux--;
 
+    if (pagina != NULL) {
+    liberaPaginaRAM(pagina);
+    pagina = NULL;
+    }
+
+    if (irmaoEsqFolha != NULL) {
+        liberaPaginaRAM(irmaoEsqFolha);
+        irmaoEsqFolha = NULL;
+    }
+
+    if (irmaoDirFolha != NULL) {
+        liberaPaginaRAM(irmaoDirFolha);
+        irmaoDirFolha = NULL;
+    }
+
     while(pai->qtd_chaves_atuais < MIN_CHAVES) {
         if (pai->posPagina == cabecalho->raiz) {
             if (pai->qtd_chaves_atuais == 0) {
@@ -745,17 +767,29 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover,
 
         if (tioEsq != NULL) {
             concatenaBplus(arquivo, cabecalho, avo, indicePaiNoAvo - 1, tioEsq, pai, escreveDado);
-            if (tioDir) 
+
+            liberaPaginaRAM(pai);
+            pai = NULL;
+
+            liberaPaginaRAM(tioEsq);
+            tioEsq = NULL;
+
+            if (tioDir != NULL) {
                 liberaPaginaRAM(tioDir);
-        } 
-        else if (tioDir != NULL) {
-            concatenaBplus(arquivo, cabecalho, avo, indicePaiNoAvo, pai, tioDir, escreveDado);
-            if (tioEsq) 
-                liberaPaginaRAM(tioEsq);
+                tioDir = NULL;
+            }
         }
 
-        
-        liberaPaginaRAM(pai);
+        else if (tioDir != NULL) {
+            concatenaBplus(arquivo, cabecalho, avo, indicePaiNoAvo, pai, tioDir, escreveDado);
+            liberaPaginaRAM(tioDir);
+            tioDir = NULL;
+        }
+
+        if (pai != NULL) {
+            liberaPaginaRAM(pai);
+        }
+
         pai = avo;
         aux--;
     }
@@ -816,78 +850,122 @@ bool redistribui(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, int posPai, in
     if (cabecalho == NULL || pagina == NULL) return false;
     
     Pagina* pai = leituraPagina(arquivo, cabecalho, posPai, leituraDado);
+    if (pai == NULL) return false;
 
-    // Verifica se o filho é o primeiro ou o último, para não tentar acessar um irmão inexistente
-    int chaveEsq = (indiceFilho > 0);
-    int chaveDir = (indiceFilho < pai->qtd_chaves_atuais);
+    int temEsq = (indiceFilho > 0);
+    int temDir = (indiceFilho < pai->qtd_chaves_atuais);
 
-    // Carrega os irmãos da esquerda e direita, caso existam
-    Pagina* irmaoEsq = chaveEsq ? leituraPagina(arquivo, cabecalho, pai->posFilhos[indiceFilho - 1], leituraDado) : NULL;
-    Pagina* irmaoDir = chaveDir ? leituraPagina(arquivo, cabecalho, pai->posFilhos[indiceFilho + 1], leituraDado) : NULL;
-    
-    if (irmaoEsq != NULL && irmaoEsq->qtd_chaves_atuais > MIN_CHAVES){
-        int tmp = irmaoEsq->qtd_chaves_atuais - 1;
+    Pagina* irmaoEsq = temEsq ? leituraPagina(arquivo, cabecalho, pai->posFilhos[indiceFilho - 1], leituraDado) : NULL;
+    Pagina* irmaoDir = temDir ? leituraPagina(arquivo, cabecalho, pai->posFilhos[indiceFilho + 1], leituraDado) : NULL;
 
-        for (int i = pagina->qtd_chaves_atuais; i > 0; i--) {
-            memcpy(pagina->chaves[i], pagina->chaves[i - 1], cabecalho->tamanho_registro);
-            pagina->posRegistro[i] = pagina->posRegistro[i - 1];
+    if (irmaoEsq != NULL && irmaoEsq->qtd_chaves_atuais > MIN_CHAVES) {
+        int qtdPagina = pagina->qtd_chaves_atuais;
+        int qtdEsq = irmaoEsq->qtd_chaves_atuais;
+
+        if (pagina->ehFolha) {
+            for (int i = qtdPagina; i > 0; i--) {
+                memcpy(pagina->chaves[i], pagina->chaves[i - 1], cabecalho->tamanho_registro);
+                pagina->posRegistro[i] = pagina->posRegistro[i - 1];
+            }
+
+            memcpy(pagina->chaves[0], irmaoEsq->chaves[qtdEsq - 1], cabecalho->tamanho_registro);
+            pagina->posRegistro[0] = irmaoEsq->posRegistro[qtdEsq - 1];
+
+            pagina->qtd_chaves_atuais++;
+            irmaoEsq->qtd_chaves_atuais--;
+
+            memcpy(pai->chaves[indiceFilho - 1], pagina->chaves[0], cabecalho->tamanho_registro);
+        }
+        else {
+            for (int i = qtdPagina; i > 0; i--) {
+                memcpy(pagina->chaves[i], pagina->chaves[i - 1], cabecalho->tamanho_registro);
+            }
+
+            for (int i = qtdPagina + 1; i > 0; i--) {
+                pagina->posFilhos[i] = pagina->posFilhos[i - 1];
+            }
+
+            memcpy(pagina->chaves[0], pai->chaves[indiceFilho - 1], cabecalho->tamanho_registro);
+            pagina->posFilhos[0] = irmaoEsq->posFilhos[qtdEsq];
+
+            memcpy(pai->chaves[indiceFilho - 1], irmaoEsq->chaves[qtdEsq - 1], cabecalho->tamanho_registro);
+
+            irmaoEsq->posFilhos[qtdEsq] = -1;
+            pagina->qtd_chaves_atuais++;
+            irmaoEsq->qtd_chaves_atuais--;
         }
 
-        // Recebe o valor da distribuição com o irmão à esquerda
-        memcpy(pagina->chaves[0], irmaoEsq->chaves[tmp], cabecalho->tamanho_registro);
-        
-        // Conecta o novo nó da página atual com o último do irmão à esquerda
-        pagina->posRegistro[0] = irmaoEsq->posRegistro[tmp];
-        pagina->qtd_chaves_atuais++;
-        irmaoEsq->qtd_chaves_atuais--;
-
-        memcpy(pai->chaves[indiceFilho - 1], pagina->chaves[0], cabecalho->tamanho_registro);
-
-        // Atualiza as 3 páginas no arquivo
         escrevePagina(arquivo, cabecalho, pagina, escreveDado);
         escrevePagina(arquivo, cabecalho, irmaoEsq, escreveDado);
         escrevePagina(arquivo, cabecalho, pai, escreveDado);
-        
+
         liberaPaginaRAM(irmaoEsq);
 
-        if (irmaoDir) liberaPaginaRAM(irmaoDir);
+        if (irmaoDir != NULL) liberaPaginaRAM(irmaoDir);
 
         liberaPaginaRAM(pai);
         return true;
     }
 
-    // Repete a lógica para o filho da direita
     if (irmaoDir != NULL && irmaoDir->qtd_chaves_atuais > MIN_CHAVES) {
-        int tmp = pagina->qtd_chaves_atuais;
+        int qtdPagina = pagina->qtd_chaves_atuais;
+        int qtdDir = irmaoDir->qtd_chaves_atuais;
 
-        memcpy(pagina->chaves[tmp], irmaoDir->chaves[0], cabecalho->tamanho_registro);
-        pagina->posRegistro[tmp] = irmaoDir->posRegistro[0];
-        pagina->qtd_chaves_atuais++;
+        if (pagina->ehFolha) {
+            memcpy(pagina->chaves[qtdPagina], irmaoDir->chaves[0], cabecalho->tamanho_registro);
+            pagina->posRegistro[qtdPagina] = irmaoDir->posRegistro[0];
 
-        for (int i = 0; i < irmaoDir->qtd_chaves_atuais - 1; i++) {
-            memcpy(irmaoDir->chaves[i], irmaoDir->chaves[i + 1], cabecalho->tamanho_registro);
-            irmaoDir->posRegistro[i] = irmaoDir->posRegistro[i + 1];
+            pagina->qtd_chaves_atuais++;
+
+            for (int i = 0; i < qtdDir - 1; i++) {
+                memcpy(irmaoDir->chaves[i], irmaoDir->chaves[i + 1], cabecalho->tamanho_registro);
+                irmaoDir->posRegistro[i] = irmaoDir->posRegistro[i + 1];
+            }
+
+            irmaoDir->qtd_chaves_atuais--;
+
+            memcpy(pai->chaves[indiceFilho], irmaoDir->chaves[0], cabecalho->tamanho_registro);
         }
 
-        irmaoDir->qtd_chaves_atuais--;
-        
-        memcpy(pai->chaves[indiceFilho], irmaoDir->chaves[0], cabecalho->tamanho_registro);
+        else {
+            memcpy(pagina->chaves[qtdPagina], pai->chaves[indiceFilho], cabecalho->tamanho_registro);
+            pagina->posFilhos[qtdPagina + 1] = irmaoDir->posFilhos[0];
+
+            pagina->qtd_chaves_atuais++;
+
+            memcpy(pai->chaves[indiceFilho], irmaoDir->chaves[0], cabecalho->tamanho_registro);
+
+            for (int i = 0; i < qtdDir - 1; i++) {
+                memcpy(irmaoDir->chaves[i], irmaoDir->chaves[i + 1], cabecalho->tamanho_registro);
+            }
+
+            for (int i = 0; i < qtdDir; i++) {
+                irmaoDir->posFilhos[i] = irmaoDir->posFilhos[i + 1];
+            }
+
+            irmaoDir->posFilhos[qtdDir] = -1;
+            irmaoDir->qtd_chaves_atuais--;
+        }
 
         escrevePagina(arquivo, cabecalho, pagina, escreveDado);
         escrevePagina(arquivo, cabecalho, irmaoDir, escreveDado);
         escrevePagina(arquivo, cabecalho, pai, escreveDado);
 
         liberaPaginaRAM(irmaoDir);
-        
-        if (irmaoEsq) liberaPaginaRAM(irmaoEsq);
-        
+
+        if (irmaoEsq != NULL) liberaPaginaRAM(irmaoEsq);
+
         liberaPaginaRAM(pai);
         return true;
     }
-    
-    // Caso não tenha conseguido redistribuir, libera as páginas e retorna false
-    if (irmaoEsq) liberaPaginaRAM(irmaoEsq);
-    if (irmaoDir) liberaPaginaRAM(irmaoDir);
+
+    if (irmaoEsq != NULL) {
+        liberaPaginaRAM(irmaoEsq);
+    }
+
+    if (irmaoDir != NULL) {
+        liberaPaginaRAM(irmaoDir);
+    }
 
     liberaPaginaRAM(pai);
     return false;

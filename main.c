@@ -257,6 +257,8 @@ int main(void) {
                     break;
                 }
 
+                imprimeDadosFuncionario(&ficha);
+
                 free(posicoesEncontradas);
                 free(chavesEncontradas);
                 break;
