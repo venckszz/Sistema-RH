@@ -62,23 +62,23 @@ void fechaBplus(FILE* arquivo, Bplus* cabecalho);
 Bplus* leituraCabecalhoBplus(FILE* arquivo);
 
 /**
- * @brief Grava ou atualiza a estrutura do cabeçalho no início (posição 0) do arquivo binário.
- * @param arquivo Ponteiro para o arquivo binário da árvore.
+ * @brief Função responsável por gravar ou atualizar a estrutura do cabeçalho no início (posição 0) do arquivo.
+ * @param arquivo Ponteiro para o arquivo da árvore.
  * @param cabecalho Ponteiro com os dados mais recentes do cabeçalho na RAM.
  */
 void escreveCabecalhoBplus(FILE* arquivo, Bplus* cabecalho);
 
 /**
- * @brief Determina o índice no arquivo para alocar uma nova página, priorizando o reaproveitamento de blocos livres.
- * @param arquivo Ponteiro para o arquivo binário da árvore.
+ * @brief Função responsável por determinar a posição no arquivo (índice) para alocar uma nova página, priorizando o reaproveitamento de blocos livres.
+ * @param arquivo Ponteiro para o arquivo da árvore.
  * @param cabecalho Ponteiro para o cabeçalho da árvore.
- * @param leituraDado Callback de leitura (usado para ler páginas livres e atualizar a encadeação de reaproveitamento).
- * @return int Índice físico (posição) onde a nova página deve ser gravada no disco.
+ * @param leituraDado Callback de leitura (usado para ler páginas livres e atualizar a lista encadeada de reaproveitamento).
+ * @return int Posição física (índice) onde a nova página deve ser gravada no disco.
  */
 int ProxPagina(FILE* arquivo, Bplus* cabecalho, void (*leituraDado)(void*, FILE*));
 
 /**
- * @brief Aloca dinamicamente e inicializa uma nova estrutura de página (nó) na memória RAM.
+ * @brief Aloca dinamicamente e inicializa uma nova estrutura de página na memória RAM.
  * @param tamanho_dado Tamanho em bytes de cada chave genérica.
  * @param ehFolha Indica se a página será criada como folha (true) ou nó interno (false).
  * @return Pagina* Ponteiro para a página recém-alocada na RAM.
@@ -102,10 +102,10 @@ void liberaLogicamentePagina(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, vo
 
 /**
  * @brief Grava fisicamente todos os dados e chaves genéricas de uma página da RAM para o arquivo em disco.
- * @param arquivo Ponteiro para o arquivo binário da árvore.
+ * @param arquivo Ponteiro para o arquivo da árvore.
  * @param cabecalho Ponteiro para o cabeçalho da árvore.
  * @param p Ponteiro para a página com os dados na RAM.
- * @param escreveDado Callback delegado para serializar a chave genérica no arquivo.
+ * @param escreveDado Callback responsável para gravar a chave genérica no arquivo.
  */
 void escrevePagina(FILE* arquivo, Bplus* cabecalho, Pagina* p, void (*escreveDado)(void*, FILE*));
 
