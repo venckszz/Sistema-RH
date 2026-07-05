@@ -250,7 +250,12 @@ int main(void) {
                 fread(&ficha, sizeof(Funcionario), 1, funcionarios);
                 
                 // Exibe a ficha cadastral completa
-                imprimeDadosFuncionario(&ficha);
+                if (!ficha.registroAtivo) {
+                    printf("\nFuncionario '%s' nao encontrado no sistema!\n", consulta.nome);
+                    free(posicoesEncontradas);
+                    free(chavesEncontradas);
+                    break;
+                }
 
                 free(posicoesEncontradas);
                 free(chavesEncontradas);

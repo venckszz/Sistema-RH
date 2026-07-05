@@ -680,9 +680,33 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover,
         }
     }
 
-   // Verifica se a concatenação da folha deixou o 'pai' em underflow
-    if (pai->qtd_chaves_atuais >= MIN_CHAVES || pai->posPagina == cabecalho->raiz) {
+    // Verifica se a concatenação da folha deixou o 'pai' em underflow
+    // Se o pai é a raiz e ficou sem chaves, a raiz deve descer para o único filho restante
+    if (pai->posPagina == cabecalho->raiz && pai->qtd_chaves_atuais == 0) {
+        cabecalho->raiz = pai->posFilhos[0];
+
+        liberaLogicamentePagina(arquivo, cabecalho, pai, escreveDado);
         escreveCabecalhoBplus(arquivo, cabecalho);
+
+        liberaPaginaRAM(pagina);
+
+        if (irmaoEsqFolha != NULL) liberaPaginaRAM(irmaoEsqFolha);
+
+        if (irmaoDirFolha != NULL) liberaPaginaRAM(irmaoDirFolha);
+
+        liberaPaginaRAM(pai);
+        return posRegistroNoArquivo;
+    }
+
+    if (pai->qtd_chaves_atuais >= MIN_CHAVES) {
+        escreveCabecalhoBplus(arquivo, cabecalho);
+
+        liberaPaginaRAM(pagina);
+
+        if (irmaoEsqFolha != NULL) liberaPaginaRAM(irmaoEsqFolha);
+
+        if (irmaoDirFolha != NULL) liberaPaginaRAM(irmaoDirFolha);
+
         liberaPaginaRAM(pai);
         return posRegistroNoArquivo;
     }
@@ -825,6 +849,7 @@ bool redistribui(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, int posPai, in
 
         if (irmaoDir) liberaPaginaRAM(irmaoDir);
 
+        liberaPaginaRAM(pai);
         return true;
     }
 
@@ -853,12 +878,15 @@ bool redistribui(FILE* arquivo, Bplus* cabecalho, Pagina* pagina, int posPai, in
         
         if (irmaoEsq) liberaPaginaRAM(irmaoEsq);
         
+        liberaPaginaRAM(pai);
         return true;
     }
     
     // Caso não tenha conseguido redistribuir, libera as páginas e retorna false
     if (irmaoEsq) liberaPaginaRAM(irmaoEsq);
     if (irmaoDir) liberaPaginaRAM(irmaoDir);
+
+    liberaPaginaRAM(pai);
     return false;
 }
 
