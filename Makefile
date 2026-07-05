@@ -1,6 +1,5 @@
 # ==========================================================================================
 # Makefile - Sistema de Gestao de RH e Folha de Pagamento (Arvore B+ em Disco)
-# Grupo - [nome-do-aluno-1], [nome-do-aluno-2], [nome-do-aluno-3], [nome-do-aluno-4]
 # ==========================================================================================
 
 # 1️⃣ Variáveis (para facilitar manutenção)
