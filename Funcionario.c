@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-
 #include "Funcionario.h"
 #include "Util.h"
 

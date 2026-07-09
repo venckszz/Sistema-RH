@@ -213,9 +213,7 @@ Pagina* buscaDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoBuscado, int* 
         i = 0;
         
         // Percorre para a direita para tentar encontrar a chave 
-        while (i < paginaAtual->qtd_chaves_atuais && 
-        !ehMenor(dadoBuscado, paginaAtual->chaves[i])) {
-            
+        while (i < paginaAtual->qtd_chaves_atuais && !ehMenor(dadoBuscado, paginaAtual->chaves[i])) { 
             i++;
         }
         
