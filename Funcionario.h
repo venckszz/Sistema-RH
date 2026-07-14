@@ -42,8 +42,8 @@ typedef struct funcionario {
     Data nascimento;
     Data contratacao;
     Data desligamento;
+    
     bool atividade; /**< Booleano que indica o funcionário está ativo em função na empresa */
-
     double historicoPagamentos[12]; /**< Vetor que armazena o histórico dos últimos até 12 meses de salários */
     int qtdPagamentos; /**< Inteiro que indica a quantidade de pagamentos realizados para o funcionário */
 } Funcionario;
