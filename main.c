@@ -494,7 +494,6 @@ int main(void) {
 
             case 6: {
                 printf("\nEncerrando o programa...\n");
-                
                 fechaBplus(arvore, cabecalhoBplus);
                 fclose(funcionarios);
                 free(cabecalhoBplus);

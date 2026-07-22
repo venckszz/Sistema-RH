@@ -194,6 +194,19 @@ Pagina* splitInterno(Pagina* pagina, Bplus* cabecalho);
 int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*));
 
 /**
+ * @brief Função responsável por atualizar a chave separadora de referência nos pais quando a primeira chave de uma página é alterada.
+ * @param arquivo Ponteiro para o arquivo da árvore.
+ * @param cabecalho Ponteiro para o cabeçalho da árvore.
+ * @param novaChaveReferencia Ponteiro para a nova chave que deverá substituir a cópia antiga no pai ou ancestral.
+ * @param posicoes_pais Vetor com as posições dos pais percorridos durante a busca.
+ * @param indices_filhos Vetor com os índices dos filhos acessados em cada pai durante a busca.
+ * @param alturaCaminho Quantidade de níveis armazenados no caminho percorrido até a folha.
+ * @param leituraDado Callback de leitura das chaves do disco.
+ * @param escreveDado Callback de escrita das chaves no disco.
+ */
+void atualizaChaveReferenciaPais(FILE* arquivo, Bplus* cabecalho, void* novaChaveReferencia, int posicoes_pais[], int indices_filhos[], int alturaCaminho, void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*));
+
+/**
  * @brief Função responsável por concatenar duas páginas irmãs e remover a chave do pai quando o nó atinge o limite mínimo de elementos.
  * @param arquivo Ponteiro para o arquivo da árvore.
  * @param cabecalho Ponteiro para o cabeçalho da árvore.

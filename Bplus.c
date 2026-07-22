@@ -545,6 +545,26 @@ Pagina* splitInterno(Pagina* pagina, Bplus* cabecalho) {
     return nova;
 }
 
+void atualizaChaveReferenciaPais(FILE* arquivo, Bplus* cabecalho, void* novaChaveReferencia, int posicoes_pais[], int indices_filhos[], int alturaCaminho, void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*)) {
+    verificaArquivo(arquivo);
+
+    if (cabecalho == NULL || novaChaveReferencia == NULL) return;
+
+    for (int i = alturaCaminho - 1; i >= 0; i--) {
+        if (indices_filhos[i] > 0) {
+            Pagina* paiAtualizar = leituraPagina(arquivo, cabecalho, posicoes_pais[i], leituraDado);
+
+            if (paiAtualizar == NULL) return;
+
+            memcpy(paiAtualizar->chaves[indices_filhos[i] - 1], novaChaveReferencia, cabecalho->tamanho_registro);
+
+            escrevePagina(arquivo, cabecalho, paiAtualizar, escreveDado);
+            liberaPaginaRAM(paiAtualizar);
+            return;
+        }
+    }
+}
+
 int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, bool (*ehMenor)(void*, void*), void (*leituraDado)(void*, FILE*), void (*escreveDado)(void*, FILE*)) {
     
     verificaArquivo(arquivo);
@@ -621,20 +641,8 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, bool (*e
     }
 
     if (pagina->qtd_chaves_atuais >= MIN_CHAVES) {
-        if (removeuPrimeiraChave && aux > 0) {
-            int posPaiAtualizar = posicoes_pais[aux - 1];
-            int indiceFilhoAtualizar = indices_filhos[aux - 1];
-
-            if (indiceFilhoAtualizar > 0) {
-                Pagina* paiAtualizar = leituraPagina(arquivo, cabecalho, posPaiAtualizar, leituraDado);
-
-                memcpy(paiAtualizar->chaves[indiceFilhoAtualizar - 1],
-                    pagina->chaves[0],
-                    cabecalho->tamanho_registro);
-
-                escrevePagina(arquivo, cabecalho, paiAtualizar, escreveDado);
-                liberaPaginaRAM(paiAtualizar);
-            }
+        if (removeuPrimeiraChave && pagina->qtd_chaves_atuais > 0 && aux > 0) {
+            atualizaChaveReferenciaPais(arquivo, cabecalho, pagina->chaves[0], posicoes_pais, indices_filhos, aux, leituraDado, escreveDado);
         }
 
         escrevePagina(arquivo, cabecalho, pagina, escreveDado);
@@ -650,6 +658,10 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, bool (*e
 
     // 1a tentariva é redistribuir as chaves com as páginas vizinhas
     if (redistribui(arquivo, cabecalho, pagina, pai->posPagina, indiceFilho, escreveDado, leituraDado)) {
+        if (removeuPrimeiraChave && pagina->qtd_chaves_atuais > 0 && aux > 0) {
+            atualizaChaveReferenciaPais(arquivo, cabecalho, pagina->chaves[0], posicoes_pais, indices_filhos, aux, leituraDado, escreveDado);
+        }
+
         escreveCabecalhoBplus(arquivo, cabecalho);
         liberaPaginaRAM(pagina);
         liberaPaginaRAM(pai);
@@ -675,6 +687,11 @@ int removeDadoBplus(FILE* arquivo, Bplus* cabecalho, void* dadoRemover, bool (*e
     else {
         if (irmaoDirFolha != NULL) {
             concatenaBplus(arquivo, cabecalho, pai, indiceFilho, pagina, irmaoDirFolha, escreveDado);
+
+            if (removeuPrimeiraChave && pagina->qtd_chaves_atuais > 0 && aux > 0) {
+                atualizaChaveReferenciaPais(arquivo, cabecalho, pagina->chaves[0], posicoes_pais, indices_filhos, aux, leituraDado, escreveDado);
+            }
+
             liberaPaginaRAM(irmaoDirFolha);
             irmaoDirFolha = NULL;
         }
