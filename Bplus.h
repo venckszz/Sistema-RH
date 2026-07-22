@@ -21,7 +21,6 @@ typedef struct pagina {
     int posPagina; /**< Posição física (índice) da página no disco */
     int qtd_chaves_atuais; /**< Quantidade atual de chaves armazenadas nesta página */
     bool ehFolha; /**< Booleano que indica se é uma página folha (true) ou nó interno (false) */
-   
     int posFilhos[ORDEM + 1]; /**< Vetor de posições físicas (índices) para os nós filhos no disco (usado apenas em nós internos) */
     int posProximo; /**< Posição (índice) no disco da próxima folha na lista encadeada (usado apenas em folhas, -1 em internas) */
     int posRegistro[ORDEM]; /**< Vetor de índices para os registros de dados no arquivo principal (usado apenas em folhas) */
@@ -34,7 +33,6 @@ typedef struct pagina {
 typedef struct Bplus {
     int raiz; /**< Posição física (índice da página) da raiz da árvore no arquivo (-1 se vazia) */
     int ordem; /**< Ordem da árvore (número máximo de filhos de um nó interno) */
-
     size_t tamanho_registro; /**< Tamanho em bytes da chave genérica armazenada na árvore */
     int qtd_paginas; /**< Quantidade total de páginas já salvas no disco */
     int prox_pos_livre; /**< Cabeça da lista encadeada de páginas removidas para reaproveitamento (-1 se nenhuma) */

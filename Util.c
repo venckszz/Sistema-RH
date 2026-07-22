@@ -7,7 +7,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "Util.h"
 #include "Bplus.h"
 
@@ -29,8 +28,7 @@ void verificaArquivo(FILE* arquivo) {
 }
 
 size_t calculaDeslocamentoPagina(int posPagina, size_t tamanho_registro) {
-    size_t tamanho_fixo_dados = (sizeof(bool) * 2) + (sizeof(int) * 4) + 
-    (sizeof(int) * ORDEM) + (sizeof(int) * ORDEM);
+    size_t tamanho_fixo_dados = (sizeof(bool) * 2) + (sizeof(int) * 4) + (sizeof(int) * ORDEM * 2);
     
     //Tamanho de acordo com os dados genéricos
     size_t tamanho_chaves = (ORDEM - 1) * tamanho_registro;

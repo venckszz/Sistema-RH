@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-
 #include "Funcionario.h"
 #include "Util.h"
 
@@ -37,9 +36,9 @@ void verificaData(Data* data) {
         // Validar Dia baseado no mês e ano
         int diasNoMes = 31;
 
-        if (data->mes == 4 || data->mes == 6 || data->mes == 9 || data->mes == 11) {
-            diasNoMes = 30;
-        } else if (data->mes == 2) {
+        if (data->mes == 4 || data->mes == 6 || data->mes == 9 || data->mes == 11) diasNoMes = 30; 
+        
+        else if (data->mes == 2) {
             
             // Verifica se o ano e bissexto
             if ((data->ano % 4 == 0 && data->ano % 100 != 0) || data->ano % 400 == 0) diasNoMes = 29;
@@ -78,7 +77,6 @@ bool dataEhMenor(Data dataA, Data dataB) {
 bool ehMenorDadoBusca(void* dado1, void* dado2) {
     dadoBusca* dado1_busca = (dadoBusca*) dado1;
     dadoBusca* dado2_busca = (dadoBusca*) dado2;
-
     int comparacao = strcmp(dado1_busca->nome, dado2_busca->nome);
 
     if (comparacao < 0) return true;

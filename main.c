@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-
 #include "Bplus.h"
 #include "Funcionario.h"
 #include "Util.h"
@@ -27,10 +26,11 @@ int main(void) {
     Registros* cabecalhoFuncionarios = leituraCabecalhoRegistros(funcionarios);
 
     FILE* arvore = fopen("bplus.bin", "rb+");
-    if (arvore == NULL) 
-        arvore = fopen("bplus.bin", "wb+");
+    
+    if (arvore == NULL) arvore = fopen("bplus.bin", "wb+");
     
     Bplus* cabecalhoBplus = leituraCabecalhoBplus(arvore);
+    
     if (cabecalhoBplus == NULL) {
         inicializaBplus(arvore, sizeof(dadoBusca));
         cabecalhoBplus = leituraCabecalhoBplus(arvore);
@@ -174,8 +174,8 @@ int main(void) {
                             chavesEncontradas[qtdEncontrados] = *chaveAtual;
                             qtdEncontrados++;
                         }
+
                         else {
-                            // Como a árvore é ordenada, se o nome mudou, não há mais homónimos à frente
                             liberaPaginaRAM(paginaAtual);
                             paginaAtual = NULL;
                             break;
@@ -196,7 +196,6 @@ int main(void) {
                     }
                 }
                 
-                // Tratamento dos resultados da pesquisa
                 if (qtdEncontrados == 0) {
                     printf("\nFuncionario '%s' nao encontrado no sistema!\n", consulta.nome);
                     free(posicoesEncontradas);
@@ -444,8 +443,6 @@ int main(void) {
                 fgets(sup.nome, sizeof(sup.nome), stdin);
                 sup.nome[strcspn(sup.nome, "\r\n")] = '\0'; // Remove o \n (e o \r quando necessário)
 
-                // Como o intervalo é fechado por nome, usa-se a menor data possível no limite inferior
-                // e a maior data possível no limite superior, garantindo a inclusão de todos os homônimos.
                 inf.dataNascimento.dia = 1;
                 inf.dataNascimento.mes = 1;
                 inf.dataNascimento.ano = 1000;
